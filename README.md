@@ -1,6 +1,3 @@
-
-markdown
-Copy code
 # CocktailProject
 
 CocktailProject is a Django-based web application that allows users to upload, retrieve, and update cocktail recipes and their specifications.
