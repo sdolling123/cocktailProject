@@ -1,0 +1,18 @@
+dialog {
+    width: 50%; /* Adjust width as needed */
+    max-width: 400px; /* Set a max width for responsiveness */
+    padding: 20px;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    position: fixed; /* Ensures the dialog stays centered */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Centers it on the screen */
+    background: white; /* Ensures good contrast */
+}
+
+dialog::backdrop {
+    background-color: rgba(0, 0, 0, .5);
+}

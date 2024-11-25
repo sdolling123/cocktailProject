@@ -1,40 +1,124 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block content %}
-<div id="list-time">
-{% for ingredient in ingredients %}
-        <a href="#" class="ingredient-item">
-            <div class="ingredient-header">
-                <span>{{ingredient.name}}</span>
-                <span>{{ingredient.ingredient_type}}</span>
-            </div>
-            <span>Edit</span>
-        </a>
+
+<div class="ingredient-list-wrapper">
+    <div class="ingredient-List-header">
+        <h1>Ingredient List</h1>
+        <a href="#">Create</a>
+    </div>
+    <div class="ingredient-search-wrapper">
+        <label for="searchIngredient" class="sr-only">Search for ingredient</label>
+        <input type="text" name="searchIngredient" placeholder="Search...">
+    </div>
+    <div class="ingredient-list">
+        {% for ingredient in ingredients %}
+            <a href="#" type="button" class="ingredient-item">
+                <div class="ingredient-item-header">
+                    <h6>{{ ingredient.name }}</h6>
+                    <small>{{ ingredient.ingredient_type }}</small>
+                </div>
+                <img src="{% static 'images/ellipsis-solid.svg' %}" alt="More details about {{ ingredient.name }}">
+            </a>
         {% endfor %}
+    </div>
 </div>
+
 <style>
-    #list-time {
-        padding: 1rem 2rem;
+    .ingredient-list-wrapper {
         display: flex;
         flex-direction: column;
-        gap: 1rem;
-        align-items: center;
+        align-items: center; /* Center the content horizontally */
+        justify-content: center; /* Center the content vertically if needed */
+        width: 100%;
+        max-width: 1200px; /* Set the maximum width */
+        margin: 0 auto; /* Center the wrapper within the viewport */
+        padding: 1rem; /* Add padding for smaller screens */
+        gap: 2rem;
+ 
     }
-    .ingredient-item {
-        {% comment %} border: 1px solid red; {% endcomment %}
+    .ingredient-List-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        text-decoration: none;
-        color: black;
-        background-color: white;
-        border-radius: .5rem;
-        min-width: 30rem;
-        padding: 1rem 2rem;
+        width: 100%;
     }
-    .ingredient-header {
+    .ingredient-List-header a {
+        color: #212529;
+        border-color: #212529;
+        text-decoration: none;
+        padding: .375rem .75rem;
+        border-width: 1px;
+        border-style: solid;
+        border-radius: .25rem;
+        font-size: 1rem;
+        transition: color .15s ease-in-out, 
+                    background-color .15s ease-in-out, 
+                    border-color .15s ease-in-out, 
+                    box-shadow .15s ease-in-out
+    }
+    .ingredient-List-header a:hover {
+        color: white;
+        background-color: #212529;
+    }
+    .ingredient-search-wrapper {
+        display: block;
+        width:100%;
+    }
+    .ingredient-search-wrapper input {
+        width: 100%;
+        padding: .375rem .75rem;
+        font-weight: 400;
+        font-size: 1rem;
+        border-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #ced4da;
+        appearance: none;
+        border-radius: .25rem;
+    }
+    .ingredient-list {
         display: flex;
         flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+
+    }
+    .ingredient-item {
+        text-decoration: none;
+        color: black;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        padding: 1rem;
+        border-bottom: 1px solid #ced4da;
+    }
+    .ingredient-item:hover {
+        background-color: rgba(0,0,0,.025);
+    }
+    .ingredient-item-header {
+        display: flex;
+        
+        justify-content: space-between;
+        flex-direction: column;
+        text-align: left;
+    }
+    .ingredient-item-header h6 {
+        margin-bottom: .25rem;
+        margin-top: 0;
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    .ingredient-item small {
+        color: #6c757d;
+        font-size: .875rem;
+    }
+
+    .ingredient-item img {
+        width: 1rem;
     }
 </style>
 {% endblock %}

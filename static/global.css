@@ -10,6 +10,10 @@
     --primaryColorBlackHover: rgba(12,23,42,.9);
 }
 
+.sr-only {
+    display: none;
+}
+
 body {
     background-color: #e8e8e8;
 }
@@ -109,6 +113,7 @@ nav {
 .navPanelMenuControls a:nth-of-type(2):hover {
     background-color: var(--primaryColorBlackHover);
 }
+
 #overlay {
     position: fixed;
     top: 0;

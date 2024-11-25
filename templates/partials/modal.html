@@ -1,0 +1,26 @@
+<dialog id="favDialog">
+    <form method="dialog">
+      <p>The background shown outside of this dialog is a backdrop.</p>
+      <button id="confirmBtn">Close the dialog</button>
+    </form>
+  </dialog>
+
+  <script>
+    const listTime = document.getElementById('list-time');
+    const favDialog = document.getElementById('favDialog');
+
+    // Event delegation: Listen for clicks on the parent container
+    listTime.addEventListener('click', (event) => {
+        const clickedButton = event.target.closest('.showDialogBtn'); 
+        if (clickedButton) {
+            // Access the content of the clicked button
+            const ingredientHeader = clickedButton.querySelector('.ingredient-header');
+            // Show the dialog
+            favDialog.showModal();
+        }
+    });
+    // Close the dialog with the built-in method
+    favDialog.addEventListener('close', () => {
+        console.log('Dialog closed');
+    });
+</script>

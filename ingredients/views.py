@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 from ingredients.models import Ingredient
 
 # Create your views here.
@@ -11,3 +11,8 @@ class IngredientListView(ListView):
     def get_queryset(self):
         # Sort the ingredients alphabetically by name
         return Ingredient.objects.all().order_by("name")
+    
+class IngredientDetailView(DetailView):
+    model = Ingredient
+    context_object_name = 'ingredient'
+    template_name = 'ingredients/ingredient_detail.html'
