@@ -1,0 +1,169 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+:root {
+    --borderColorGrey: #e5e7eb;
+    --primaryColorBlack: rgba(12,23,42,1);
+    --primaryColorBlackHover: rgba(12,23,42,.9);
+}
+
+body {
+    background-color: #e8e8e8;
+}
+
+nav {
+    background-color: white;
+}
+
+.navPanel {
+    position: fixed;
+    background-color: white;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    min-width: 20rem;
+    transition: all ease-in-out 250ms;
+    transform: translateX(100%);
+    z-index: 900;
+}
+.navPanel.open {
+    transform: translateX(0%);
+}
+.navBanner {
+    z-index: 400;
+}
+.navBannerHeader,
+.navPanelMenuHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+}
+.navBannerTitle{
+    font-size: 1.5rem;
+}
+.openNavPanelButton,
+.closeNavPanelButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 2rem;
+    height: 2rem;
+    border: none;
+    background: none;
+    cursor:pointer;
+}
+
+.openNavPanelButton img,
+.closeNavPanelButton img {
+    width: 1.375rem;
+}
+
+.navPanelLinks {
+    border-top: 1px solid var(--borderColorGrey);
+    border-bottom: 1px solid var(--borderColorGrey);
+    padding: 1.5rem 2rem;
+}
+.navPanelLinks ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+.navPanelLinks a {
+    text-decoration: none;
+    color: black;
+    display: block;
+    padding: .5rem 0rem;
+}
+.navPanelLinks a:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+}
+.navPanelMenuControls {
+    padding: 1.5rem 2rem;
+}
+.navPanelMenuControls a {
+    text-decoration: none;
+    color: black;
+}
+.navPanelMenuControls a:nth-of-type(1) {
+    display: block;
+    padding: .5rem 0;
+}
+.navPanelMenuControls a:nth-of-type(2) {
+    display: inline-flex;
+    justify-content: center;
+    margin-top: 1rem;
+    padding: .75rem 1rem;
+    width: 100%;
+    border-radius: .5rem;
+    background-color: var(--primaryColorBlack);
+    color: white;
+}
+.navPanelMenuControls a:nth-of-type(2):hover {
+    background-color: var(--primaryColorBlackHover);
+}
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: block;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 850;
+    transition: all ease-in-out 250ms;
+}
+
+@media (min-width: 768px) {
+    nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .openNavPanelButton {
+        display: none;
+    }
+    .navPanel {
+        all: unset;
+    }
+    .navPanelMenu {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+    }
+    .navPanelMenuHeader {
+        display: none;
+    }
+    .navPanelLinks {
+        border: none;
+        padding: 0;
+    }
+    .navPanelLinks ul {
+        flex-direction: row;
+        justify-content: space-around;
+        gap: 2rem;
+    }
+    .navPanelMenuControls a:nth-of-type(1) {
+        display: none;
+    }
+    .navPanelMenuControls a:nth-of-type(2) {
+        margin-top: 0;
+        padding: 0;
+        color: black;
+        background-color: white;
+    }
+    .navPanelMenuControls a:nth-of-type(2):hover {
+        background-color: transparent;
+
+    }
+
+}

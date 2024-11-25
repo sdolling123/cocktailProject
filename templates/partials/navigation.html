@@ -1,0 +1,64 @@
+{% load static %}
+<header>
+    <nav>
+        <div class="navBanner">
+            <div class="navBannerHeader">
+                <div class="navBannerTitle">
+                    <span>AppName</span>
+                </div>
+                <button id="openNavPanelButton" class="openNavPanelButton">
+                    <img src="{% static 'images/bars-solid.svg'%}" alt="openMenu">
+                </button>
+            </div>
+        </div>
+        <div id="navPanel" class="navPanel">
+            <div class="navPanelMenu">
+                <div class="navPanelMenuHeader">
+                    <div>
+                        <span>AppName</span>
+                    </div>
+                    <button id="closeNavPanelButton" class="closeNavPanelButton">
+                        <img src="{% static 'images/xmark-solid.svg'%}" alt="openMenu">
+                    </button>
+                </div>
+                <div class="navPanelLinks">
+                    <ul>
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="navPanelMenuControls">
+                    <a href="#">Logout</a>
+                    <a href="#"><span>Logout</span></a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+<div id="overlay"></div>
+<script>
+// Cache DOM elements
+const openButton = document.getElementById("openNavPanelButton");
+const closeButton = document.getElementById("closeNavPanelButton");
+const navPanel = document.getElementById("navPanel");
+const overlay = document.getElementById('overlay');
+ 
+// Utility function to toggle the panel's state
+const toggleNavPanel = (isOpen) => {
+    if (isOpen) {
+        navPanel.classList.add('open');
+        openButton.setAttribute('aria-expanded', 'true');
+        overlay.style.opacity = '1';
+        overlay.style.pointerEvents = 'all';
+    } else {
+        navPanel.classList.remove('open');
+        openButton.setAttribute('aria-expanded', 'false');
+        overlay.style.opacity = '0';
+        overlay.style.pointerEvents = 'none';
+    }
+};
+// Event listeners
+openButton.addEventListener('click', () => toggleNavPanel(true));
+closeButton.addEventListener('click', () => toggleNavPanel(false));
+</script>

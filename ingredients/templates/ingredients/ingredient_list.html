@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div id="list-time">
+{% for ingredient in ingredients %}
+        <a href="#" class="ingredient-item">
+            <div class="ingredient-header">
+                <span>{{ingredient.name}}</span>
+                <span>{{ingredient.ingredient_type}}</span>
+            </div>
+            <span>Edit</span>
+        </a>
+        {% endfor %}
+</div>
+<style>
+    #list-time {
+        padding: 1rem 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        align-items: center;
+    }
+    .ingredient-item {
+        {% comment %} border: 1px solid red; {% endcomment %}
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        text-decoration: none;
+        color: black;
+        background-color: white;
+        border-radius: .5rem;
+        min-width: 30rem;
+        padding: 1rem 2rem;
+    }
+    .ingredient-header {
+        display: flex;
+        flex-direction: column;
+    }
+</style>
+{% endblock %}
+
