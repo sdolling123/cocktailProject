@@ -14,7 +14,7 @@
     </div>
     <div class="ingredient-list">
         {% for ingredient in ingredients %}
-            <a href="#" type="button" class="ingredient-item">
+            <a href="{% url 'ingredient-detail' pk=ingredient.id %}" type="button" class="ingredient-item">
                 <div class="ingredient-item-header">
                     <h6>{{ ingredient.name }}</h6>
                     <small>{{ ingredient.ingredient_type }}</small>
