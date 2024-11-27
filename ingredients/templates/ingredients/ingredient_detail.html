@@ -4,7 +4,7 @@
 <div class="ingredient-detail-wrapper"> <!-- Adjust height based on navbar -->
     <!-- Edit button aligned to the right of the container -->
     <div class="ingredient-detail-edit-btn">
-        <a href="#">Edit</a>
+        <a href="{% url 'ingredient-edit' pk=ingredient.id %}">Edit</a>
     </div>
 
     <!-- Ingredient name and brand centered with some margin -->
@@ -45,8 +45,8 @@
     </div>
 
     <!-- Back button centered and stretched to fit smaller screens -->
-    <div class="ingredient-detail-back-btn d-flex justify-content-center mt-4">
-        <a href="{% url 'ingredient-list' %}" class="btn btn-dark flex-grow-1 w-50">Back</a>
+    <div class="ingredient-detail-back-btn">
+        <a href="{% url 'ingredient-list' %}" class="">Back</a>
     </div>
 </div>
 

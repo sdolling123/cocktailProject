@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="ingredient-create-wrapper">
+    {% if ingredient.id %}<a href="{% url 'ingredient-delete' pk=ingredient.id %}" type="button" class="ingredient-delete-btn">Delete</a> {% else %}{% endif %}
+    <div class="ingredient-create-header">
+        <h1> {% if ingredient.id %}Update {% else %} Create new {% endif %}ingredient</h1>
+    </div>
+    <form method="post" class="create-ingredient-form">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="form-group">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.errors %}
+                    <div class="error-messages">
+                        {{ field.errors }}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <div class="form-actions">
+            <button type="submit">{% if ingredient.id %}Update {% else %} Add {% endif %}ingredient</button>
+            <a href="{% url 'ingredient-list' %}" type="button">{% if ingredient.id %}Cancel changes {% else %} Cancel creation{% endif %}</a>
+        </div>
+    </form>
+</div>
+<style>
+    .ingredient-create-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 1rem;
+    }
+
+    .ingredient-create-header {
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+
+    .ingredient-delete-btn{
+        align-self: flex-start;
+        color: #dc3545;
+        
+        text-decoration: none;
+        padding: .375rem .75rem;
+        border-width: 1px;
+        border-style: solid;
+        border-radius: .25rem;
+        font-size: 1rem;
+        transition: color .15s ease-in-out, 
+                    background-color .15s ease-in-out, 
+                    border-color .15s ease-in-out, 
+                    box-shadow .15s ease-in-out
+
+    }
+
+    .ingredient-delete-btn:hover {
+        background-color: #dc3545;
+        color: white;
+        border: 1px solid #dc3545;
+    }
+
+    .ingredient-create-header > h1 {
+        color: #333;
+        font-size: 1.75rem;
+        align-self: stretch;
+        
+    }
+    
+    .create-ingredient-form {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: .25rem;
+    }
+
+    .form-group {
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #555;
+        font-weight: 500;
+    }
+
+    .form-group input, 
+    .form-group select, 
+    .form-group textarea {
+        width: 100%;
+        padding: .375rem .75rem;
+        font-weight: 400;
+        font-size: 1rem;
+        border-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #ced4da;
+        appearance: none;
+        border-radius: .25rem;
+        transition: border-color 0.3s ease;
+    }
+
+    .form-group input:focus, 
+    .form-group select:focus, 
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #4a90e2;
+    }
+
+    .error-messages {
+        color: #d9534f;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+
+    .form-actions {
+        display: flex;
+        width: 100%;
+        margin-top: 1.25rem;
+        gap: .5rem;
+        flex-wrap: wrap;
+    }
+
+    .form-actions a, 
+    .form-actions button {
+        color: #212529;
+        border-color: #212529;
+        text-decoration: none;
+        padding: .375rem .75rem;
+        border-width: 1px;
+        border-style: solid;
+        border-radius: .25rem;
+        font-size: 1rem;
+        width: 100%;
+        transition: color .15s ease-in-out, 
+                    background-color .15s ease-in-out, 
+                    border-color .15s ease-in-out, 
+                    box-shadow .15s ease-in-out
+    }
+
+    .form-actions a {
+        background-color: #6c757d;
+        color: white;
+        border: 1px solid #ddd;
+        text-align: center;
+    }
+
+    .form-actions a:hover {
+        background-color: rgba(108, 117, 125, .8);
+    }
+
+
+    .form-actions button {
+        background-color: rgba(74, 144, 226, 1);
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+
+    .form-actions button:hover {
+        background-color: rgba(74, 144, 226, .8);
+    }
+
+    @media (min-width: 768px) {
+        .create-ingredient-form {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0 2rem;
+        }
+        .form-group:has(textarea){
+            grid-column: span 2;
+        }
+
+        .form-actions {
+            grid-column: span 2;
+            justify-content: flex-start;
+            flex-direction: row-reverse;
+        }
+
+        .form-actions a, .form-actions button {
+            width: auto;
+        }
+    }
+</style>
+{% endblock content %}

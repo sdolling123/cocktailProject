@@ -6,7 +6,7 @@
 <div class="ingredient-list-wrapper">
     <div class="ingredient-List-header">
         <h1>Ingredient List</h1>
-        <a href="#">Create</a>
+        <a href="{% url 'ingredient-create' %}">Create</a>
     </div>
     <div class="ingredient-search-wrapper">
         <label for="searchIngredient" class="sr-only">Search for ingredient</label>
@@ -24,6 +24,28 @@
         {% endfor %}
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchInput = document.querySelector('input[name="searchIngredient"]');
+        const ingredientItems = document.querySelectorAll('.ingredient-item');
+    
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase().trim();
+    
+            ingredientItems.forEach(item => {
+                const ingredientName = item.querySelector('h6').textContent.toLowerCase();
+                const ingredientType = item.querySelector('small').textContent.toLowerCase();
+    
+                // Show/hide based on name or type match
+                const isVisible = ingredientName.includes(searchTerm) || 
+                                  ingredientType.includes(searchTerm);
+                
+                item.style.display = isVisible ? 'flex' : 'none';
+            });
+        });
+    });
+</script>
 
 <style>
     .ingredient-list-wrapper {
@@ -76,14 +98,20 @@
         border: 1px solid #ced4da;
         appearance: none;
         border-radius: .25rem;
+        transition: border-color 0.3s ease;
     }
+
+    .ingredient-search-wrapper input:focus {
+        outline: none;
+        border-color: #4a90e2;
+    }
+
     .ingredient-list {
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         width: 100%;
-
     }
     .ingredient-item {
         text-decoration: none;
