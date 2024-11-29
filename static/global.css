@@ -1,22 +1,45 @@
+*, *::before, *::after {
+    box-sizing: border-box;
+  }
+
 * {
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
+    font: inherit; /* Get rid of all font sizes and heights */
+  }
+
 :root {
-    --borderColorGrey: #e5e7eb;
-    --primaryColorBlack: rgba(12,23,42,1);
-    --primaryColorBlackHover: rgba(12,23,42,.9);
+    --borderColorGrey: rgba(229, 231, 235, 1);
+    --primaryColorBlack: rgba(51, 51, 51, 1);
+    --primaryColorBlackHover: rgba(51, 51, 51, .8);
+    --dangerColorRed: rgba(220, 53, 69, 1);
+    --dangerHoverColorRed: rgba(220, 53, 69, .8);
+    --fontH1Size: 1.75rem;
 }
 
 .sr-only {
     display: none;
 }
 
-/* body {
-    background-color: white;
-} */
+body {
+    font-size: 1rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: var(--primaryColorBlack);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    text-wrap: balance;
+  }
+
+  h1 {
+    font-size: var(--fontH1Size);
+    font-weight: 500;
+  }
+
+p {
+    max-width: 75ch;
+    text-wrap: pretty; /* Prevents orphans on lines */
+}
 
 nav {
     background-color: white;
@@ -50,7 +73,8 @@ nav {
     font-size: 1.5rem;
 }
 .openNavPanelButton,
-.closeNavPanelButton {
+.closeNavPanelButton,
+.modal-header__closeImg {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -62,7 +86,8 @@ nav {
 }
 
 .openNavPanelButton img,
-.closeNavPanelButton img {
+.closeNavPanelButton img,
+.modal-header__closeImg img {
     width: 1.375rem;
 }
 
@@ -81,9 +106,10 @@ nav {
 }
 .navPanelLinks a {
     text-decoration: none;
-    color: black;
+    color: var(--primaryColorBlack);
     display: block;
     padding: .5rem 0rem;
+    font-weight: 500;
 }
 .navPanelLinks a:hover {
     background-color: rgba(0, 0, 0, 0.2);
@@ -94,7 +120,8 @@ nav {
 }
 .navPanelMenuControls a {
     text-decoration: none;
-    color: black;
+    color: var(--primaryColorBlack);
+    font-weight: 500;
 }
 .navPanelMenuControls a:nth-of-type(1) {
     display: block;
@@ -127,6 +154,214 @@ nav {
     z-index: 850;
     transition: all ease-in-out 250ms;
 }
+
+/* FORMS */
+
+.form-group {
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #555;
+    font-weight: 500;
+}
+
+.form-group input, 
+.form-group select, 
+.form-group textarea {
+    width: 100%;
+    padding: .375rem .75rem;
+    font-weight: 400;
+    font-size: 1rem;
+    border-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    appearance: none;
+    border-radius: .25rem;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus, 
+.form-group select:focus, 
+.form-group textarea:focus {
+    outline: none;
+    border-color: #4a90e2;
+}
+
+.error-messages {
+    color: var(--dangerColorRed);
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    width: 100%;
+}
+/* BUTTONS */
+
+.button {
+    text-decoration: none;
+    padding: .375rem .75rem;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: .25rem;
+    font-size: 1rem;
+    /* width: 100%; */
+    color: white;
+    text-align: center;
+    cursor: pointer;
+    transition: color .15s ease-in-out, 
+                background-color .15s ease-in-out, 
+                border-color .15s ease-in-out, 
+                box-shadow .15s ease-in-out
+}
+
+.button-outline {
+    color: #212529;
+    border-color: #212529;
+    text-decoration: none;
+    padding: .375rem .75rem;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: .25rem;
+    font-size: 1rem;
+    cursor: pointer;
+    background-color: transparent;
+    transition: color .15s ease-in-out, 
+                background-color .15s ease-in-out, 
+                border-color .15s ease-in-out, 
+                box-shadow .15s ease-in-out
+}
+
+.button-outline:hover {
+    color: white;
+    background-color: #212529;
+}
+
+.button.button-primary {
+    background-color: rgb(11, 86, 172);
+    border-color: rgb(11, 86, 172);
+}
+
+.button.button-primary:hover {
+    background-color: rgba(11, 86, 172, .8);
+    border-color: rgba(11, 86, 172, .8);
+}
+
+.button.button-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+.button.button-secondary:hover {
+    background-color: rgba(108, 117, 125, .8);
+    border-color: rgba(108, 117, 125, .8);
+}
+
+.button.button-danger {
+    background-color: var(--dangerColorRed);
+    border-color: var(--dangerColorRed);
+}
+
+.button.button-danger:hover {
+    background-color: var(--dangerHoverColorRed);
+    border-color: var(--dangerHoverColorRed);
+}
+
+/* MODAL */
+dialog {
+    width: 90%; /* Adjust width as needed */
+    max-width: 550px; /* Set a max width for responsiveness */
+    padding: 20px;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    position: fixed; /* Ensures the dialog stays centered */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Centers it on the screen */
+    background: white; /* Ensures good contrast */
+}
+
+dialog::backdrop {
+    background-color: rgba(0, 0, 0, .5);
+}
+
+.modal-header {
+    display: flex;
+    align-items: center; /* Vertically align items */
+    justify-content: flex-end; /* Space between first and last elements */
+    padding-inline: .5rem;
+    padding-block: 0;
+}
+
+.modal-body {
+    padding: .75rem;
+    line-height: 1.6;
+}
+
+.modal-body strong {
+    color: var(--dangerColorRed); /* Highlighted danger text */
+    font-weight: 500;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: space-evenly;
+    padding: .75rem;
+}
+
+/* SUCCESS ALERT */
+.success-alert {
+    background-color: #d4edda; /* Light green background */
+    color: #155724; /* Dark green text */
+    border: 1px solid #c3e6cb; /* Green border */
+    border-radius: .25rem;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1rem;
+    width: 100%;
+}
+
+.success-alert__body p {
+    margin: 0;
+    font-size: 1rem;
+}
+
+.success-alert__close {
+    background: none;
+    border: none;
+    cursor: pointer;
+
+}
+
+.success-alert__close > svg {
+    width: 1.357rem;
+    color: #155724;
+}
+
+.success-alert__close svg:hover {
+    color: #0b2e13;
+}
+
+/* MEDIA QUERRIES FOR LARGER SCREENS */
+
+@media (prefers-reduced-motion: no-preference) {
+    :has(:target) {
+      scroll-behavior: smooth;
+      scroll-padding-top: 3rem;
+    }
+  }
 
 @media (min-width: 768px) {
     nav {
@@ -163,12 +398,19 @@ nav {
     .navPanelMenuControls a:nth-of-type(2) {
         margin-top: 0;
         padding: 0;
-        color: black;
+        color: var(--primaryColorBlack);
         background-color: white;
     }
     .navPanelMenuControls a:nth-of-type(2):hover {
         background-color: transparent;
 
     }
+    .form-actions {
+        grid-column: span 2;
+    }
 
+    dialog {
+        width: 50%; /* Adjust width as needed */
+        max-width: 400px; /* Set a max width for responsiveness */
+    }
 }

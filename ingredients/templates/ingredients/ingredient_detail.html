@@ -1,20 +1,18 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="ingredient-detail-wrapper"> <!-- Adjust height based on navbar -->
+<div class="ingredient-detail"> <!-- Adjust height based on navbar -->
     <!-- Edit button aligned to the right of the container -->
-    <div class="ingredient-detail-edit-btn">
-        <a href="{% url 'ingredient-edit' pk=ingredient.id %}">Edit</a>
-    </div>
+    <a class="ingredient-detail__update button-outline button-secondary" href="{% url 'ingredient-edit' pk=ingredient.id %}">Update</a>
 
     <!-- Ingredient name and brand centered with some margin -->
-    <div class="ingredient-detail-header">
+    <div class="ingredient-detail__header">
         <h3>{{ ingredient.name }}</h3>
         <h5>{{ ingredient.brand }}</h5>
     </div>
 
     <!-- Instructions centered with larger width for readability -->
-    <div class="ingredient-detail-instr">
+    <div class="ingredient-detail__instructions">
         <p>{{ ingredient.instructions }}</p>
     </div>
 
@@ -45,8 +43,8 @@
     </div>
 
     <!-- Back button centered and stretched to fit smaller screens -->
-    <div class="ingredient-detail-back-btn">
-        <a href="{% url 'ingredient-list' %}" class="">Back</a>
+    <div class="ingredient-detail__actions">
+        <a href="{% url 'ingredient-list' %}" class="button button-secondary">Back to List</a>
     </div>
 </div>
 
@@ -60,7 +58,7 @@
     });
 </script>
 <style>
-    .ingredient-detail-wrapper {
+    .ingredient-detail {
         display: flex;
         flex-direction: column;
         width: 100%;
@@ -71,46 +69,23 @@
         padding: 1rem;
         gap: 2rem;
     }
-    .ingredient-detail-edit-btn {
-        display: flex;
-        justify-content: flex-end;
-        width: 100%;
-        padding: 1rem;
-        margin-top: 2rem;
-    }
 
-    .ingredient-detail-edit-btn a,
-    .ingredient-detail-back-btn a {
-        color: #212529;
-        border-color: #212529;
-        text-decoration: none;
-        padding: .375rem .75rem;
-        border-width: 1px;
-        border-style: solid;
-        border-radius: .25rem;
-        font-size: 1rem;
-        transition: color .15s ease-in-out, 
-                    background-color .15s ease-in-out, 
-                    border-color .15s ease-in-out, 
-                    box-shadow .15s ease-in-out
+    .ingredient-detail__update {
+        align-self: flex-end;
     }
-    .ingredient-detail-edit-btn a:hover,
-    .ingredient-detail-back-btn a:hover {
-        color: white;
-        background-color: #212529;
-    }
-    .ingredient-detail-header,
-    .ingredient-detail-instr {
+    .ingredient-detail__header,
+    .ingredient-detail__instructions {
         text-align: center;
         margin-bottom: 1.5rem;
     }
-    .ingredient-detail-header h3 {
+    .ingredient-detail__header h3 {
         margin-bottom: .25rem;
     }
-    .ingredient-detail-header h5 {
+    .ingredient-detail__header h5 {
         color: #6c757d;
         font-size: .875rem;
     }
+
     #advancedIngrTable table {
         max-width: 75%;
         border-collapse: collapse;
