@@ -39,6 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # My apps
     'ingredients',
+    'cocktails',
+    # Allows for stepped form experience
+    'formtools',
 ]
 
 MIDDLEWARE = [

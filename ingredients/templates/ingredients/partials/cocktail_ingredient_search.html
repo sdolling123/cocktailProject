@@ -1,0 +1,131 @@
+{% load static %}
+
+<div class="ingredient-search-comp">
+    <!-- Search Bar at the Top -->
+    <div class="form-group ingredient-search-header">
+        <button class="modal-header__closeImg" data-dismiss="modal">
+            <img src="{% static 'images/xmark-solid.svg'%}" alt="closeModal">
+        </button>
+        <h6>Select ingredients</h6>
+        <label for="search" class="sr-only">Select ingredients</label>
+        <input class="ingredient-search-input" type="text" name="search" placeholder="Search...">
+    </div>
+
+    <!-- Scrollable List of Ingredients -->
+    <div class="ingredient-search__container">
+        {% for ingredient in ingredients %}
+        <div 
+            class="ingredient-search-item" 
+            data-id="ingredient-{{ingredient.id}}" 
+            data-toggle="select">
+            <div class="ingredient-item-header">
+                <h6>{{ ingredient.name }}</h6>
+                <small>{{ ingredient.brand }}</small>
+            </div>
+            <div class="ingredient-selected-indicator">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                    <path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/>
+                </svg>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Button at the Bottom -->
+    <div class="ingredient-search-footer">
+        <button id="ingredient-add-button" type="text" class="button button-primary" disabled data-dismiss="modal">Add selected</button>
+    </div>
+</div>
+
+<style>
+/* Container for the search component */
+.ingredient-search-comp {
+    display: flex;
+    flex-direction: column;
+    max-height: 80vh; /* Limit modal height */
+    border-radius: .5rem;
+    
+}
+
+/* Search bar at the top */
+.ingredient-search-header {
+    margin-bottom: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+}
+
+.ingredient-search-header button {
+    align-self: flex-end;
+}
+
+.ingredient-search-input {
+    width: 100%;
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+/* Scrollable ingredient list */
+.ingredient-search__container {
+    flex: 1;
+    overflow-y: auto;
+    /* border: 1px solid #ddd; */
+    border-radius: 4px;
+    /* background-color: #f9f9f9; */
+}
+
+/* Individual ingredient item */
+.ingredient-search-item {
+    display: flex;
+    justify-content: space-between;
+    cursor: pointer;
+    align-items: center;
+    padding: .5rem;
+    border-bottom: 1px solid #ced4da;
+    transition: background-color 0.2s ease;
+}
+
+.ingredient-search-item:hover {
+    background-color: rgba(0,0,0,.025);
+}
+
+.ingredient-selected-indicator svg {
+    display: none;
+    width: 20px;
+    height: 20px;
+    fill: #007bff; /* Customize the color */
+    transition: opacity 0.2s ease-in-out;
+}
+
+.ingredient-search-item.selected svg {
+    display: block;
+}
+
+.ingredient-search-item:last-child {
+    border-bottom: none;
+}
+.ingredient-item-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+.ingredient-item-header h6 {
+    margin-bottom: .25rem;
+    margin-top: 0;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.ingredient-item-header small {
+    color: #6c757d;
+    font-size: .875rem;
+}
+/* Footer at the bottom */
+.ingredient-search-footer {
+    display: block;
+    width: 100%;
+    margin-top: 1rem;
+}
+</style>

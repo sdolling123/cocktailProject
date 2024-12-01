@@ -15,6 +15,7 @@
     --dangerColorRed: rgba(220, 53, 69, 1);
     --dangerHoverColorRed: rgba(220, 53, 69, .8);
     --fontH1Size: 1.75rem;
+    --fontH6Size: 1.25rem;
 }
 
 .sr-only {
@@ -25,14 +26,21 @@ body {
     font-size: 1rem;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: var(--primaryColorBlack);
+    color: inherit;
 }
 
 h1, h2, h3, h4, h5, h6 {
     text-wrap: balance;
+    color: var(--primaryColorBlack);
   }
 
   h1 {
     font-size: var(--fontH1Size);
+    font-weight: 500;
+  }
+
+  h6 {
+    font-size: var(--fontH6Size);
     font-weight: 500;
   }
 
@@ -162,7 +170,7 @@ nav {
     margin-bottom: 1rem;
 }
 
-.form-group label {
+.form-group label:not(.sr-only) {
     display: block;
     margin-bottom: 0.5rem;
     color: #555;
@@ -274,6 +282,10 @@ nav {
     border-color: var(--dangerHoverColorRed);
 }
 
+.button:disabled {
+    display: none;
+}
+
 /* MODAL */
 dialog {
     width: 90%; /* Adjust width as needed */
@@ -284,10 +296,12 @@ dialog {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     text-align: center;
     position: fixed; /* Ensures the dialog stays centered */
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%); /* Centers it on the screen */
+    top: calc(50% - 0.5px); /* Adjust to avoid fractional pixels */
+    left: calc(50% - 0.5px);
+    transform: translate3d(-50%, -50%, 0);
     background: white; /* Ensures good contrast */
+    overflow: hidden; /* Prevent internal scrolling */
+    /* will-change: transform; */
 }
 
 dialog::backdrop {

@@ -14,6 +14,15 @@ class IngredientListView(ListView):
     def get_queryset(self):
         # Sort the ingredients alphabetically by name
         return Ingredient.objects.all().order_by("name")
+
+class IngredientComponentListView(ListView):
+    model = Ingredient
+    context_object_name = 'ingredients'
+    template_name = 'ingredients/partials/cocktail_ingredient_search.html'
+
+    def get_queryset(self):
+        # Sort the ingredients alphabetically by name
+        return Ingredient.objects.all().order_by("name")
     
 class IngredientDetailView(DetailView):
     model = Ingredient

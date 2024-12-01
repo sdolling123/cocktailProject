@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block head %}
+{{ wizard.form.media }}
+{% endblock %}
+
+{% block content %}
+<div class="cocktail-create">
+  <h1>Create a Cocktail</h1>
+  <p>Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</p>
+  <form method="post">
+    {% csrf_token %}
+    {{ wizard.management_form }}
+    {% for field in wizard.form %}
+    <div class="form-group">
+        {{ field.label_tag }}
+        {{ field }}
+        {% if field.errors %}
+            <div class="error-messages">
+                {{ field.errors }}
+            </div>
+        {% endif %}
+    </div>
+{% endfor %}
+
+    <div class="form-actions">
+        <a href="{% url 'cocktail-list' %}" class="button button-secondary">Cancel</a>
+        <button id="addIngredientBtn" 
+                class="button button-secondary" 
+                type="button" 
+                value="Add Ingredient"
+                hx-get="{% url 'cocktail-ingredient-search' %}"
+                hx-trigger="click"
+                hx-target="#modal-body-content">{% translate "Add Ingredient" %}</button>
+{% if wizard.steps.prev %}
+    <button class="button button-secondary" name="wizard_goto_step" type="submit" value="{{ wizard.steps.first }}">{% translate "Beginning" %}</button>
+    <button class="button button-secondary" name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">{% translate "Go Back" %}</button>
+{% endif %}
+<input type="submit" {% if wizard.steps.current == wizard.steps.last %} value="{% translate 'Submit Form' %}" {% else %} value="{% translate 'Next Step' %}" {% endif %} class="button button-primary">
+    </div>
+
+  </form>
+</div>
+
+<!-- Modal -->
+{% include "../partials/modal.html" %}
+
+<script>
+  const searchIngredient = document.getElementById('addIngredientBtn');
+  const cocktailIngrDialog = document.getElementById('favDialog');
+
+  searchIngredient.addEventListener('click', ()=> {
+    cocktailIngrDialog.showModal();
+  })
+</script>
+<script>
+  // Select items from the ingredient add list
+  document.addEventListener('click', (event) => {
+    if (event.target.hasAttribute('data-toggle') && event.target.getAttribute('data-toggle') === 'select') {
+      event.target.classList.toggle('selected');
+      const selectedNumber = document.querySelectorAll('.selected');
+      const addSelectedButton = document.getElementById('ingredient-add-button');
+      if (selectedNumber.length > 0) {
+        console.log(selectedNumber.length);
+        addSelectedButton.disabled = false;
+        addSelectedButton.textContent = `Add selected (${selectedNumber.length})`;
+      } else {
+        addSelectedButton.disabled = true;
+      }
+    }
+  })
+</script>
+
+<style>
+  .cocktail-create {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    /* align-items: center; */
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 1rem;
+  }
+
+  .cocktail-create h1, p {
+    text-align: center;
+  }
+</style>
+
+{% endblock %}
