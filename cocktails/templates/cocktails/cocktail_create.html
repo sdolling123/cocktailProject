@@ -69,7 +69,25 @@
         addSelectedButton.disabled = true;
       }
     }
-  })
+  });
+// Search through item list
+document.addEventListener('input', (event) => {
+  if (event.target.name = 'searchCocktailIngredient') {
+    const searchValue = event.target.value.toLowerCase().trim();
+    const cocktailIngredientItems = document.querySelectorAll(".ingredient-search-item");
+
+    cocktailIngredientItems.forEach(item => {
+      const ingredientName = item.querySelector('h6').textContent.toLowerCase();
+      const ingredientType = item.querySelector('small').textContent.toLowerCase();
+      // Show/hide based on name or type match
+      const isVisible = ingredientName.includes(searchValue) || 
+                        ingredientType.includes(searchValue);
+      
+      item.style.display = isVisible ? 'flex' : 'none';
+    })
+  }
+})
+
 </script>
 
 <style>

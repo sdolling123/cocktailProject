@@ -7,8 +7,8 @@
             <img src="{% static 'images/xmark-solid.svg'%}" alt="closeModal">
         </button>
         <h6>Select ingredients</h6>
-        <label for="search" class="sr-only">Select ingredients</label>
-        <input class="ingredient-search-input" type="text" name="search" placeholder="Search...">
+        <label for="searchCocktailIngredient" class="sr-only">Select ingredients</label>
+        <input class="ingredient-search-input" type="text" name="searchCocktailIngredient" placeholder="Search...">
     </div>
 
     <!-- Scrollable List of Ingredients -->
@@ -17,7 +17,8 @@
         <div 
             class="ingredient-search-item" 
             data-id="ingredient-{{ingredient.id}}" 
-            data-toggle="select">
+            data-toggle="select"
+            data-search="true">
             <div class="ingredient-item-header">
                 <h6>{{ ingredient.name }}</h6>
                 <small>{{ ingredient.brand }}</small>
