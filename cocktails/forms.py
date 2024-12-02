@@ -24,3 +24,6 @@ class CocktailIngredientsForm(forms.Form):
     
 class CocktailInstructionsForm(forms.Form):
     instructions = forms.CharField(widget=forms.Textarea)
+    
+class PlaceholderForm(forms.Form):
+    pass

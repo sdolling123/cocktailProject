@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+<form method="post">
+    {% csrf_token %}
+    {{ wizard.management_form }}
+
+    <button type="button" hx-get="{% url 'select_children_modal' %}" hx-target="#modal" hx-trigger="click">Select Items</button>
+
+    <div id="form-container">
+        <!-- HTMX will inject forms here -->
+        {% for form in child_forms %}
+            <div class="child-form">
+                {{ form.as_p }}
+            </div>
+        {% endfor %}
+    </div>
+
+    <button type="submit">Next</button>
+</form>
+
+<div id="modal" hx-target="this" hx-swap="outerHTML"></div>

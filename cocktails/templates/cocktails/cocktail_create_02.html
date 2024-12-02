@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+<form method="post">
+    {% csrf_token %}
+    {{ wizard.management_form }}
+
+    <button type="button" hx-get="{% url 'select_children_modal' %}" hx-target="#modal" hx-trigger="click">Select Items</button>
+
+    <div id="form-container">
+        <!-- HTMX will inject forms here -->
+        {% for form in child_forms %}
+            <div class="child-form">
+                {{ form.as_p }}
+            </div>
+        {% endfor %}
+    </div>
+
+    <button type="submit">Next</button>
+</form>
+
+<!-- Modal -->
+{% include "../partials/modal.html" %}
+
+<script>
+  const searchIngredient = document.getElementById('addIngredientBtn');
+  const cocktailIngrDialog = document.getElementById('favDialog');
+
+  searchIngredient.addEventListener('click', ()=> {
+    cocktailIngrDialog.showModal();
+  })
+
+  // Select items from the ingredient add list
+  document.addEventListener('click', (event) => {
+    if (event.target.hasAttribute('data-toggle') && event.target.getAttribute('data-toggle') === 'select') {
+      event.target.classList.toggle('selected');
+      const selectedNumber = document.querySelectorAll('.selected');
+      const addSelectedButton = document.getElementById('ingredient-add-button');
+      if (selectedNumber.length > 0) {
+        console.log(selectedNumber.length);
+        addSelectedButton.disabled = false;
+        addSelectedButton.textContent = `Add selected (${selectedNumber.length})`;
+      } else {
+        addSelectedButton.disabled = true;
+      }
+    }
+  });
+
+  // Search through item list
+  document.addEventListener('input', (event) => {
+    if (event.target.name === 'searchCocktailIngredient') {
+      console.log(event.target.name);
+      const searchValue = event.target.value.toLowerCase().trim();
+      const cocktailIngredientItems = document.querySelectorAll(".ingredient-search-item");
+
+      cocktailIngredientItems.forEach(item => {
+        const ingredientName = item.querySelector('h6').textContent.toLowerCase();
+        const ingredientType = item.querySelector('small').textContent.toLowerCase();
+        // Show/hide based on name or type match
+        const isVisible = ingredientName.includes(searchValue) || 
+                          ingredientType.includes(searchValue);
+        
+        item.style.display = isVisible ? 'flex' : 'none';
+      })
+    } else {
+      console.log(event.target.name);
+    }
+  })
+</script>

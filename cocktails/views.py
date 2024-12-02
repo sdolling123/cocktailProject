@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from formtools.wizard.views import SessionWizardView
 from .models import Cocktail, CocktailIngredient
-from .forms import CocktailBasicDetailsForm, CocktailIngredientsForm, CocktailInstructionsForm
+from .forms import CocktailBasicDetailsForm, CocktailIngredientsForm, CocktailInstructionsForm, PlaceholderForm
 from django.contrib import messages
 from django.urls import reverse_lazy
 from django.views.generic import ListView
@@ -15,10 +15,16 @@ class CocktailListView(ListView):
     def get_queryset(self):
         # Sort the ingredients alphabetically by name
         return Cocktail.objects.all().order_by("name")
-    
+
+FORMS = [
+    ('cocktail-overview',CocktailBasicDetailsForm),
+    ('add-ingredient',PlaceholderForm),
+    ('cocktail-instructions',CocktailInstructionsForm),
+]
+
 class CocktailCreationWizard(SessionWizardView):
-    form_list = [CocktailBasicDetailsForm, CocktailIngredientsForm, CocktailInstructionsForm]
-    template_name = 'cocktails/cocktail_create.html'
+    form_list = FORMS
+    # template_name = 'cocktails/cocktail_create.html'
 
     def done(self, form_list, **kwargs):
         """
