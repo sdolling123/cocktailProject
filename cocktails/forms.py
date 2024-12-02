@@ -8,15 +8,19 @@ class CocktailBasicDetailsForm(forms.ModelForm):
         fields = ['name', 'type', 'style']
 
 class CocktailIngredientsForm(forms.Form):
-    ingredients = forms.ModelMultipleChoiceField(
-    queryset=Ingredient.objects.all(),
-    widget=forms.SelectMultiple,  # Use dropdown for multiple selections
-    label="Select Ingredients"
-    )
-    quantity = forms.FloatField(min_value=0, label="Quantity")
+    ingredients = forms.ModelMultipleChoiceField(queryset=Ingredient.objects.all(), widget=forms.CheckboxSelectMultiple)
+    quantity = forms.FloatField(min_value=0)
     unit = forms.ChoiceField(choices=[('slice', 'Slice'), ('wedge', 'Wedge'), ('drop', 'Drop'), ('dash', 'Dash'),
-                                     ('millimeter', 'Millimeter'), ('ounce', 'Ounce'), ('cup', 'Cup')],
-                             label="Unit")
+                                     ('millimeter', 'Millimeter'), ('ounce', 'Ounce'), ('cup', 'Cup')])
+
+    def save(self, cocktail):
+        for ingredient in self.cleaned_data['ingredients']:
+            CocktailIngredient.objects.create(
+                cocktail=cocktail,
+                ingredient=ingredient,
+                quantity=self.cleaned_data['quantity'],
+                unit=self.cleaned_data['unit']
+            )
     
 class CocktailInstructionsForm(forms.Form):
     instructions = forms.CharField(widget=forms.Textarea)

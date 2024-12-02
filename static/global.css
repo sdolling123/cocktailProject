@@ -205,6 +205,12 @@ nav {
     margin-top: 0.25rem;
 }
 
+.errorlist {
+    text-decoration: none;
+    list-style: none;
+    font-weight: 500;
+}
+
 .form-actions {
     display: flex;
     justify-content: flex-end;

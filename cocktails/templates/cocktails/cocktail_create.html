@@ -9,7 +9,7 @@
 <div class="cocktail-create">
   <h1>Create a Cocktail</h1>
   <p>Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</p>
-  <form method="post">
+  <form method="post" hx-preserve="true">
     {% csrf_token %}
     {{ wizard.management_form }}
     {% for field in wizard.form %}
@@ -24,7 +24,7 @@
     </div>
 {% endfor %}
 
-    <div class="form-actions">
+    <div class="form-actions" >
         <a href="{% url 'cocktail-list' %}" class="button button-secondary">Cancel</a>
         <button id="addIngredientBtn" 
                 class="button button-secondary" 
@@ -37,7 +37,7 @@
     <button class="button button-secondary" name="wizard_goto_step" type="submit" value="{{ wizard.steps.first }}">{% translate "Beginning" %}</button>
     <button class="button button-secondary" name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">{% translate "Go Back" %}</button>
 {% endif %}
-<input type="submit" {% if wizard.steps.current == wizard.steps.last %} value="{% translate 'Submit Form' %}" {% else %} value="{% translate 'Next Step' %}" {% endif %} class="button button-primary">
+<input type="submit"{% if wizard.steps.current == wizard.steps.last %} value="{% translate 'Submit Form' %}" {% else %} value="{% translate 'Next Step' %}" {% endif %} class="button button-primary">
     </div>
 
   </form>
@@ -53,8 +53,7 @@
   searchIngredient.addEventListener('click', ()=> {
     cocktailIngrDialog.showModal();
   })
-</script>
-<script>
+
   // Select items from the ingredient add list
   document.addEventListener('click', (event) => {
     if (event.target.hasAttribute('data-toggle') && event.target.getAttribute('data-toggle') === 'select') {
@@ -70,24 +69,27 @@
       }
     }
   });
-// Search through item list
-document.addEventListener('input', (event) => {
-  if (event.target.name = 'searchCocktailIngredient') {
-    const searchValue = event.target.value.toLowerCase().trim();
-    const cocktailIngredientItems = document.querySelectorAll(".ingredient-search-item");
 
-    cocktailIngredientItems.forEach(item => {
-      const ingredientName = item.querySelector('h6').textContent.toLowerCase();
-      const ingredientType = item.querySelector('small').textContent.toLowerCase();
-      // Show/hide based on name or type match
-      const isVisible = ingredientName.includes(searchValue) || 
-                        ingredientType.includes(searchValue);
-      
-      item.style.display = isVisible ? 'flex' : 'none';
-    })
-  }
-})
+  // Search through item list
+  document.addEventListener('input', (event) => {
+    if (event.target.name === 'searchCocktailIngredient') {
+      console.log(event.target.name);
+      const searchValue = event.target.value.toLowerCase().trim();
+      const cocktailIngredientItems = document.querySelectorAll(".ingredient-search-item");
 
+      cocktailIngredientItems.forEach(item => {
+        const ingredientName = item.querySelector('h6').textContent.toLowerCase();
+        const ingredientType = item.querySelector('small').textContent.toLowerCase();
+        // Show/hide based on name or type match
+        const isVisible = ingredientName.includes(searchValue) || 
+                          ingredientType.includes(searchValue);
+        
+        item.style.display = isVisible ? 'flex' : 'none';
+      })
+    } else {
+      console.log(event.target.name);
+    }
+  })
 </script>
 
 <style>
