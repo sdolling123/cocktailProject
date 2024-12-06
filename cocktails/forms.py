@@ -27,3 +27,10 @@ class CocktailInstructionsForm(forms.Form):
     
 class PlaceholderForm(forms.Form):
     pass
+
+class SelectIngredientsForm(forms.Form):
+    ingredients = forms.ModelMultipleChoiceField(
+        queryset=Ingredient.objects.all(),
+        widget=forms.CheckboxSelectMultiple,
+        label="Select Ingredients",
+    )

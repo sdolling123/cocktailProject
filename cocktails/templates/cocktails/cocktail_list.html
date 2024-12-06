@@ -28,13 +28,13 @@
     <div class="cocktail-list__list">
          {% if cocktails %}
             {% for cocktail in cocktails %}
-                <button class="cocktail-item" type="text">
+                <a class="cocktail-item" href={% url 'select_ingredients' pk=cocktail.id %} type="text">
                     <div class="cocktail-item__header">
                         <h6>{{ cocktail.name }}</h6>
                         <small>{{ cocktail.method }}, {{ cocktail.style }}</small>
                     </div>
                     <img src="{% static 'images/ellipsis-solid.svg' %}" alt="More details about {{ cocktail.name }}">
-                </button>
+                </a>
             {% endfor %}
          {% else %}
          {% endif %}

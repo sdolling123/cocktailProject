@@ -24,8 +24,10 @@
     </div>
 {% endfor %}
 
+
     <div class="form-actions" >
         <a href="{% url 'cocktail-list' %}" class="button button-secondary">Cancel</a>
+        {% if wizard.steps.step0 == 1 %}
         <button id="addIngredientBtn" 
                 class="button button-secondary" 
                 type="button" 
@@ -33,6 +35,8 @@
                 hx-get="{% url 'cocktail-ingredient-search' %}"
                 hx-trigger="click"
                 hx-target="#modal-body-content">{% translate "Add Ingredient" %}</button>
+                {% else %}
+                {% endif %}
 {% if wizard.steps.prev %}
     <button class="button button-secondary" name="wizard_goto_step" type="submit" value="{{ wizard.steps.first }}">{% translate "Beginning" %}</button>
     <button class="button button-secondary" name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">{% translate "Go Back" %}</button>
@@ -42,6 +46,56 @@
 
   </form>
 </div>
+
+<!-- Modal -->
+{% include "../partials/modal.html" %}
+
+<script>
+  const searchIngredient = document.getElementById('addIngredientBtn');
+  const cocktailIngrDialog = document.getElementById('favDialog');
+
+  searchIngredient.addEventListener('click', ()=> {
+    cocktailIngrDialog.showModal();
+  })
+
+  // Select items from the ingredient add list
+  document.addEventListener('click', (event) => {
+    if (event.target.hasAttribute('data-toggle') && event.target.getAttribute('data-toggle') === 'select') {
+      event.target.classList.toggle('selected');
+      const selectedNumber = document.querySelectorAll('.selected');
+      const addSelectedButton = document.getElementById('ingredient-add-button');
+      if (selectedNumber.length > 0) {
+        console.log(selectedNumber.length);
+        addSelectedButton.disabled = false;
+        addSelectedButton.textContent = `Add selected (${selectedNumber.length})`;
+      } else {
+        addSelectedButton.disabled = true;
+      }
+    }
+  });
+
+  // Search through item list
+  document.addEventListener('input', (event) => {
+    if (event.target.name === 'searchCocktailIngredient') {
+      console.log(event.target.name);
+      const searchValue = event.target.value.toLowerCase().trim();
+      const cocktailIngredientItems = document.querySelectorAll(".ingredient-search-item");
+
+      cocktailIngredientItems.forEach(item => {
+        const ingredientName = item.querySelector('h6').textContent.toLowerCase();
+        const ingredientType = item.querySelector('small').textContent.toLowerCase();
+        // Show/hide based on name or type match
+        const isVisible = ingredientName.includes(searchValue) || 
+                          ingredientType.includes(searchValue);
+        
+        item.style.display = isVisible ? 'flex' : 'none';
+      })
+    } else {
+      console.log(event.target.name);
+    }
+  })
+</script>
+
 
 <style>
   .cocktail-create {
