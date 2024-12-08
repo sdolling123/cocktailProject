@@ -30,7 +30,11 @@ class PlaceholderForm(forms.Form):
 
 class SelectIngredientsForm(forms.Form):
     ingredients = forms.ModelMultipleChoiceField(
-        queryset=Ingredient.objects.all(),
-        widget=forms.CheckboxSelectMultiple,
+        queryset=Ingredient.objects.all().order_by("name"),
+        widget=forms.CheckboxSelectMultiple(attrs={'class': 'ingredient-checkbox'}),
         label="Select Ingredients",
     )
+    
+    def get_ingredient_details(self):
+        # Return a dictionary with ingredient id as key and additional details as value
+        return {ingredient.id: ingredient for ingredient in self.fields['ingredients'].queryset}

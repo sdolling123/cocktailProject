@@ -1,13 +1,139 @@
 {% extends "base.html" %}
+{% load custom_filters %}
 
 {% block content %}
+<div class="cocktail-select-ingredients">
+    
+    <div class="cocktail-ingredient-select-header">
+        <h1>Ingredients for {{ cocktail.name }}</h1>
+    </div>
+    <div class="ingredient-search-wrapper form-group">
+        <label for="searchIngredient" class="sr-only">Search for ingredient</label>
+        <input class="" type="text" name="searchIngredient" placeholder="Search...">
+    </div>
+    <form method="post">
+        {% csrf_token %}
+        <div class="select-ingredients-list">
+            {% for ingredient in form.ingredients.field.queryset %}
+                    <label class="checkbox-container">
+                        <div class="checkbox-container__colOne">
+                            <span class="cocktail-select-ingredient-name">{{ ingredient.name }}
+                            </span>
+                            <div class="cocktail-select-type-brand">
+                                {% if ingredient.brand %}
+                                <span class="cocktail-select-brand">{{ ingredient.brand}}</span>
+                                <span> &#8226; </span>
+                                {% endif %}
+                                <span class="cocktail-select-type">{{ ingredient.ingredient_type|replace_underscore }}</span>
+                                {% if ingredient.abv %}
+                                <span> &#8226; </span>
+                                <span class="cocktail-select-ingredient-abv">{{ ingredient.abv }}%</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <input type="checkbox" name="ingredients" value="{{ ingredient.id }}"
+                               {% if ingredient.id in selected_ingredient_ids %}checked{% endif %}>
+                    </label>
+            {% endfor %}
+        </div>
+        <div class="form-actions select-ingredient-controls">
+            <a href="{% url 'cocktail-list' %}" class="button button-secondary">Back to Cocktails</a>
+            <button type="submit" class="button button-primary">Save Ingredients</button>
+        </div>
+    </form>
+</div>
+<script>
+const searchSelectInput = document.querySelector('input[name="searchIngredient"]');
+const selectIngredientItems = document.querySelectorAll('.checkbox-container');
 
-<h1>Select Ingredients for {{ cocktail.name }}</h1>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Add Ingredients</button>
-</form>
+searchSelectInput.addEventListener('input', (e) => {
+    const searchTerm = e.target.value.toLowerCase().trim();
 
-{% endblock content %}
+    selectIngredientItems.forEach(item => {
+        const ingredientName = item.querySelector('.cocktail-select-ingredient-name').textContent.toLowerCase();
+        const ingredientType = item.querySelector('.cocktail-select-type').textContent.toLowerCase();
+        const ingredientAbv = item.querySelector('.cocktail-select-ingredient-abv');
+        const ingredientBrand = item.querySelector('.cocktail-select-brand');
 
+        // Initialize variables for ABV and Brand, ensuring they are only set if the elements exist
+        let ingredientAbvLower = '';
+        let ingredientBrandLower = '';
+
+        if (ingredientAbv) {
+            ingredientAbvLower = ingredientAbv.textContent.toLowerCase();
+        }
+
+        if (ingredientBrand) {
+            ingredientBrandLower = ingredientBrand.textContent.toLowerCase();
+        }
+
+        // Check if any of the fields match the search term
+        const isVisible = ingredientName.includes(searchTerm) ||
+                          ingredientType.includes(searchTerm) ||
+                          ingredientAbvLower.includes(searchTerm) || // Only check ABV if it exists
+                          ingredientBrandLower.includes(searchTerm); // Only check Brand if it exists
+
+        item.style.display = isVisible ? 'flex' : 'none';
+    });
+});
+</script>
+<style>
+    .select-ingredients-list {
+        overflow-y: auto;
+        max-height: 60vh;
+        min-height: 60vh;
+        
+    }
+    .cocktail-ingredient-select-header {
+        text-align: center;
+    }
+    .checkbox-container{
+        display: flex;
+        width: 100%;
+        border-bottom: 1px solid #ced4da;
+        padding: 1rem;
+        color: var(--primaryColorBlack);
+        cursor: pointer;
+    }
+    .checkbox-container:hover {
+        background-color: rgba(0,0,0,.025);
+        border-radius: .25rem;
+    }
+    .checkbox-container input {
+        margin-left: auto;
+    }
+    .cocktail-select-ingredient-abv {
+        font-weight: 400;
+        color: #6c757d;
+        font-size: .875rem;
+    }
+
+    .cocktail-select-ingredient-name {
+        font-weight: 500;
+    }
+    .checkbox-container__colOne {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        gap: .5rem;
+    }
+    .cocktail-select-type-brand {
+        color: #6c757d;
+    }
+    .cocktail-select-brand {
+        font-style: italic;
+        font-weight: 500;
+        color: #6c757d;
+        font-size: .875rem;
+    }
+    .cocktail-select-type {
+        text-transform: capitalize;
+        font-size: .875rem;
+        color: #6c757d;
+    }
+    .select-ingredient-controls {
+        margin-top: 1rem;
+    }
+
+</style>
+{% endblock %}

@@ -31,7 +31,7 @@
                 <a class="cocktail-item" href={% url 'select_ingredients' pk=cocktail.id %} type="text">
                     <div class="cocktail-item__header">
                         <h6>{{ cocktail.name }}</h6>
-                        <small>{{ cocktail.method }}, {{ cocktail.style }}</small>
+                        <small>{{ cocktail.type }}, {{ cocktail.style }}</small>
                     </div>
                     <img src="{% static 'images/ellipsis-solid.svg' %}" alt="More details about {{ cocktail.name }}">
                 </a>
@@ -41,4 +41,92 @@
 
      </div>
 </div>
+
+<script>
+    const searchCocktails = document.querySelector('input[name="cocktailSearch"]');
+    const cocktailItem = document.querySelectorAll('.cocktail-item');
+    
+    searchCocktails.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase().trim();
+    
+        cocktailItem.forEach(item => {
+            const cocktailName = item.querySelector('h6').textContent.toLowerCase();
+            const cocktailDetails = item.querySelector('small').textContent.toLowerCase();
+    
+            // Check if any of the fields match the search term
+            const isVisible = cocktailName.includes(searchTerm) ||
+                              cocktailDetails.includes(searchTerm)
+                            
+    
+            item.style.display = isVisible ? 'flex' : 'none';
+        });
+    });
+    </script>
+
+<style>
+    .cocktail-list {
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* Center the content horizontally */
+        justify-content: center; /* Center the content vertically if needed */
+        width: 100%;
+        max-width: 1200px; /* Set the maximum width */
+        margin: 0 auto; /* Center the wrapper within the viewport */
+        padding: 1rem; /* Add padding for smaller screens */
+        gap: 2rem;
+    }
+
+    .cocktail-list__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    }
+
+    .cocktail-list__list {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .cocktail-item {
+        text-decoration: none;
+        color: black;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        padding: 1rem;
+        border-bottom: 1px solid #ced4da;
+    }
+    .cocktail-item:hover {
+        background-color: rgba(0,0,0,.025);
+    }
+    .cocktail-item__header {
+        display: flex;
+        
+        justify-content: space-between;
+        flex-direction: column;
+        text-align: left;
+    }
+    .cocktail-item__header h6 {
+        margin-bottom: .25rem;
+        margin-top: 0;
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    .cocktail-item small {
+        color: #6c757d;
+        font-size: .875rem;
+    }
+
+    .cocktail-item img {
+        width: 1rem;
+    }
+</style>
+
 {% endblock %}
+

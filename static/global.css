@@ -293,6 +293,27 @@ nav {
     display: none;
 }
 
+/* COCKTAIL SELECT INGREDIENT */
+.cocktail-select-ingredients{
+    display: flex;
+    flex-direction: column;
+
+    justify-content: center; /* Center the content vertically if needed */
+    width: 100%;
+    max-width: 1200px; /* Set the maximum width */
+    margin: 0 auto; /* Center the wrapper within the viewport */
+    padding: 1rem; /* Add padding for smaller screens */
+    gap: 2rem;
+}
+.cocktail-ingredient-select__form {
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+    width: 100%;
+    max-width: 1200px; /* Set the maximum width */
+}
+
+
 /* MODAL */
 dialog {
     width: 90%; /* Adjust width as needed */

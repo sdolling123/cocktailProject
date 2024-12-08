@@ -64,40 +64,41 @@ class SelectIngredientsView(FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["cocktail"] = get_object_or_404(Cocktail, pk=self.kwargs["pk"])
+        cocktail = get_object_or_404(Cocktail, pk=self.kwargs["pk"])
+        context["cocktail"] = cocktail
+        # Pass pre-selected ingredient IDs to the template
+        context["selected_ingredient_ids"] = list(cocktail.ingredients.values_list("ingredient_id", flat=True))
         return context
 
     def get_form(self):
         """Override to pre-select ingredients already associated with the cocktail."""
         form = super().get_form()
         cocktail = get_object_or_404(Cocktail, pk=self.kwargs["pk"])
-        # Get the ingredients already linked to this cocktail
-        selected_ingredients = Ingredient.objects.filter(
-            id__in=cocktail.ingredients.values_list("ingredient_id", flat=True)
-        )
-        # Pre-select these ingredients in the form
-        form.fields["ingredients"].initial = selected_ingredients
+
+        # Pre-select ingredients associated with the cocktail
+        selected_ingredients = cocktail.ingredients.values_list("ingredient_id", flat=True)
+        form.fields["ingredients"].initial = Ingredient.objects.filter(id__in=selected_ingredients)
         return form
 
     def form_valid(self, form):
         cocktail = get_object_or_404(Cocktail, pk=self.kwargs["pk"])
         selected_ingredients = form.cleaned_data["ingredients"]
 
-        # Update the cocktail's ingredients
+        # Sync cocktail's ingredients with the selected ones
         # Remove ingredients no longer selected
         CocktailIngredient.objects.filter(cocktail=cocktail).exclude(
             ingredient__in=selected_ingredients
         ).delete()
 
-        # Add new ingredients
+        # Add or update new ingredients
         for ingredient in selected_ingredients:
             CocktailIngredient.objects.get_or_create(
                 cocktail=cocktail,
                 ingredient=ingredient,
-                defaults={"quantity": 0, "unit": ""},
+                defaults={"quantity": 0, "unit": "ounce"},  # Adjust defaults as needed
             )
 
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse_lazy("cocktail-list")
+        return reverse_lazy("cocktail-list")  # Adjust to your detail view
