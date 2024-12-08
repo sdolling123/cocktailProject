@@ -6,7 +6,7 @@ class CocktailAdmin(admin.ModelAdmin):
     list_display = ('id','name')
     
 class CocktailIngredientAdmin(admin.ModelAdmin):
-    list_display = ('id','ingredient','cocktail')
+    list_display = ('id','ingredient','cocktail','quantity','unit')
     
     
 admin.site.register(Cocktail, CocktailAdmin)

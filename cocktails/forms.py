@@ -1,6 +1,7 @@
 from django import forms
 from .models import Cocktail, CocktailIngredient
 from ingredients.models import Ingredient
+from django.forms import formset_factory
 
 class CocktailBasicDetailsForm(forms.ModelForm):
     class Meta:
@@ -39,3 +40,12 @@ class SelectIngredientsForm(forms.Form):
     def get_ingredient_details(self):
         # Return a dictionary with ingredient id as key and additional details as value
         return {ingredient.id: ingredient for ingredient in self.fields['ingredients'].queryset}
+    
+class AddIngredientDetailsForm(forms.Form):
+    quantity = forms.FloatField(min_value=0, required=False)
+    unit = forms.ChoiceField(
+        choices=[('slice', 'Slice'), ('wedge', 'Wedge'), ('drop', 'Drop'), 
+                 ('dash', 'Dash'), ('millimeter', 'Millimeter'), 
+                 ('ounce', 'Ounce'), ('cup', 'Cup')],
+        required=False
+    )

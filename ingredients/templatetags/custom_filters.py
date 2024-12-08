@@ -17,3 +17,7 @@ def get_value_from_checkbox(value):
 def replace_underscore(value):
     """Replace underscores with spaces"""
     return value.replace('_', ' ')
+
+@register.filter
+def get_item(dictionary, key):
+    return dictionary[key]

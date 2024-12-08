@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load custom_filters %}
+
+{% block head %}
+{{ wizard.form.media }}
+{% endblock %}
+
+{% block content %}
+<div class="cocktail-wizard-three">
+    <h2>Step 3: Add Ingredient Details</h2>
+    <form method="post" class="mt-1">
+        {% csrf_token %}
+        {{ wizard.management_form }}
+        
+        {{ wizard.form.management_form }}
+        
+        {% for form in wizard.form.forms %}
+            <div class="ingredient-details">
+                <div class="ingredient-details__header">
+                    <label for="ingredientSelectName-{{ ingredients|get_item:forloop.counter0 }}">Ingredient:</label>
+                    <input value="{{ ingredients|get_item:forloop.counter0 }}" 
+                        type="text" 
+                        name="ingredientSelectName-{{ ingredients|get_item:forloop.counter0}}" 
+                        id="ingredientSelectName-{{ ingredients|get_item:forloop.counter0 }}"
+                        disabled>
+                </div>
+                {{ form.as_p }}
+            </div>
+        {% endfor %}
+        <div class="form-actions mt-1">
+        {% if wizard.steps.prev %}
+            <button class="button button-secondary" name="wizard_goto_step" type="submit" value="{{ wizard.steps.first }}">{% translate "Beginning" %}</button>
+            <button class="button button-secondary" name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">{% translate "Go Back" %}</button>
+            {% endif %}
+            <button class="button button-primary" type="submit">Next</button>
+        </div>
+    </form>
+</div>
+
+<style>
+    .cocktail-wizard-three {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 1rem;
+    }
+    .cocktail-wizard-three form {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        width: inherit;
+    }
+    .ingredient-details {
+        display: flex;
+        /* grid-template-columns: 1fr 1fr 1fr; */
+        gap: .75rem;
+        /* align-items: flex-start; */
+        /* flex-direction: column; */
+        /* flex-wrap: wrap; */
+        width: 100%;
+    }
+    .ingredient-details__header {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        flex: 2;
+    }
+
+    .ingredient-details p {
+        flex: 1;
+    }
+
+    .ingredient-details label:not(.sr-only) {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #555;
+        font-weight: 500;
+    }
+    .ingredient-details input, 
+    .ingredient-details select, 
+    .ingredient-details textarea {
+        width: 100%;
+        padding: .375rem .75rem;
+        font-weight: 400;
+        font-size: 1rem;
+        border-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #ced4da;
+        appearance: none;
+        border-radius: .25rem;
+        transition: border-color 0.3s ease;
+    }
+
+    .ingredient-details input:focus, 
+    .ingredient-details select:focus, 
+    .ingredient-details textarea:focus {
+        outline: none;
+        border-color: #4a90e2;
+    }
+
+    .mt-1 {
+        margin-top: 1rem;
+    }
+
+    @media (min-width: 768px) {
+        .ingredient-details {
+            align-items: flex-start;
+        }
+    }
+</style>
+{% endblock content %}
