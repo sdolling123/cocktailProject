@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="ingredient-detail"> <!-- Adjust height based on navbar -->
+    <!-- Edit button aligned to the right of the container -->
+    <a class="ingredient-detail__update button-outline button-secondary" href="#">Update</a>
+
+    <!-- Ingredient name and brand centered with some margin -->
+    <div class="ingredient-detail__header">
+        <h3>{{ cocktail.name }}</h3>
+        <h5>{{ cocktail.type }}</h5>
+    </div>
+
+    <!-- Instructions centered with larger width for readability -->
+    <div class="ingredient-detail__instructions">
+        <p>{{ cocktail.instructions }}</p>
+    </div>
+
+    <!-- Advanced Info Toggle Switch -->
+    <div>
+        <label for="showAdvanceIngrsToggle">Show advanced info?</label>
+        <input type="checkbox" role="switch" id="showAdvanceIngrsToggle">
+    </div>
+
+    <!-- Advanced Info Table, hidden by default -->
+    <div id="advancedIngrTable" style="display: none;">
+        <table class="table table-hover w-75 mx-auto">
+            <tbody>
+                <tr>
+                    <td>ABV</td>
+                    <td>sdfsdf</td>
+                </tr>
+                <tr>
+                    <td>Sweetness</td>
+                    <td>sdfsd</td>
+                </tr>
+                <tr>
+                    <td>Acid</td>
+                    <td>sdfsdf</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Back button centered and stretched to fit smaller screens -->
+    <div class="ingredient-detail__actions">
+        <a href="{% url 'cocktail-list' %}" class="button button-secondary">Back to List</a>
+    </div>
+</div>
+
+<script>
+    // Toggle visibility of advanced info table
+    const advancedToggle = document.getElementById('showAdvanceIngrsToggle');
+    const ingredientTable = document.getElementById('advancedIngrTable');
+
+    advancedToggle.addEventListener('change', function() {
+        ingredientTable.style.display = advancedToggle.checked ? 'block' : 'none';
+    });
+</script>
+<style>
+    .ingredient-detail {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        max-width: 1200px;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        padding: 1rem;
+        gap: 2rem;
+    }
+
+    .ingredient-detail__update {
+        align-self: flex-end;
+    }
+    .ingredient-detail__header,
+    .ingredient-detail__instructions {
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+    .ingredient-detail__header h3 {
+        margin-bottom: .25rem;
+    }
+    .ingredient-detail__header h5 {
+        color: #6c757d;
+        font-size: .875rem;
+    }
+
+    #advancedIngrTable table {
+        max-width: 75%;
+        border-collapse: collapse;
+    }
+    #advancedIngrTable table td {
+        padding: .75rem;
+        border-top: 1px solid #dee2e6;
+    }
+</style>
+{% endblock content %}
+

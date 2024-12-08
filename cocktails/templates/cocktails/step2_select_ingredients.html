@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>Step 2: Select Ingredients</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ wizard.management_form }}
+        {{ wizard.form.as_p }}
+
+        <ul>
+            {% for ingredient in cocktail.ingredients.all %}
+                <li>{{ ingredient.name }}</li>
+            {% endfor %}
+        </ul>
+
+        <button type="submit">Next</button>
+    </form>
+{% endblock content %}

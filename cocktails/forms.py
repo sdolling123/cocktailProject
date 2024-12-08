@@ -33,6 +33,7 @@ class SelectIngredientsForm(forms.Form):
         queryset=Ingredient.objects.all().order_by("name"),
         widget=forms.CheckboxSelectMultiple(attrs={'class': 'ingredient-checkbox'}),
         label="Select Ingredients",
+        required=False,
     )
     
     def get_ingredient_details(self):

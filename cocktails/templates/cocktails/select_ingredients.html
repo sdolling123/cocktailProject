@@ -1,4 +1,9 @@
 {% extends "base.html" %}
+{% load i18n %}
+
+{% block head %}
+{{ wizard.form.media }}
+{% endblock %}
 {% load custom_filters %}
 
 {% block content %}
@@ -13,8 +18,9 @@
     </div>
     <form method="post">
         {% csrf_token %}
+        {{ wizard.management_form }}
         <div class="select-ingredients-list">
-            {% for ingredient in form.ingredients.field.queryset %}
+            {% for ingredient in wizard.form.fields.ingredients.queryset %}
                     <label class="checkbox-container">
                         <div class="checkbox-container__colOne">
                             <span class="cocktail-select-ingredient-name">{{ ingredient.name }}
@@ -32,13 +38,17 @@
                             </div>
                         </div>
                         <input type="checkbox" name="ingredients" value="{{ ingredient.id }}"
-                               {% if ingredient.id in selected_ingredient_ids %}checked{% endif %}>
+                               {% if ingredient.id|stringformat:"s" in selected_ingredient_ids %}checked{% endif %}>
                     </label>
             {% endfor %}
         </div>
         <div class="form-actions select-ingredient-controls">
             <a href="{% url 'cocktail-list' %}" class="button button-secondary">Back to Cocktails</a>
             <button type="submit" class="button button-primary">Save Ingredients</button>
+            {% if wizard.steps.prev %}
+    <button class="button button-secondary" name="wizard_goto_step" type="submit" value="{{ wizard.steps.first }}">{% translate "Beginning" %}</button>
+    <button class="button button-secondary" name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">{% translate "Go Back" %}</button>
+{% endif %}
         </div>
     </form>
 </div>

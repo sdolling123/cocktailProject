@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block head %}
+{{ wizard.form.media }}
+{% endblock %}
+{% block content %}
+    <h2>Step 3: Instructions</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ wizard.management_form }}
+        {{ wizard.form.as_p }}
+        {% if wizard.steps.prev %}
+        <button class="button button-secondary" name="wizard_goto_step" type="submit" value="{{ wizard.steps.first }}">{% translate "Beginning" %}</button>
+        <button class="button button-secondary" name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">{% translate "Go Back" %}</button>
+    {% endif %}
+        <button type="submit">Finish</button>
+    </form>
+{% endblock content %}
+

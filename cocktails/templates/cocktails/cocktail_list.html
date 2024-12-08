@@ -5,7 +5,7 @@
 <div class="cocktail-list">
     <div class="cocktail-list__header">
         <h1>Cocktails</h1>
-        <a href="{% url 'cocktail-create' %}" class="button button-outline">Add Cocktail</a>
+        <a href="{% url 'cocktail-wizard' %}" class="button button-outline">Add Cocktail</a>
     </div>
     <div class="cocktail-search form-group">
         <label for="cocktailSearch" class="sr-only">Find cocktail</label>
@@ -28,7 +28,7 @@
     <div class="cocktail-list__list">
          {% if cocktails %}
             {% for cocktail in cocktails %}
-                <a class="cocktail-item" href={% url 'select_ingredients' pk=cocktail.id %} type="text">
+                <a class="cocktail-item" href={% url 'cocktail-details' pk=cocktail.id %} type="text">
                     <div class="cocktail-item__header">
                         <h6>{{ cocktail.name }}</h6>
                         <small>{{ cocktail.type }}, {{ cocktail.style }}</small>
