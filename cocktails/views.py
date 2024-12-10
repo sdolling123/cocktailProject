@@ -23,6 +23,11 @@ class CocktailDetailView(DetailView):
     model = Cocktail
     context_object_name = 'cocktail'
     template_name = 'cocktails/cocktail_details.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['cocktail_ingredients'] = CocktailIngredient.objects.filter(cocktail = self.object)
+        return context
 
 FORMS = [
     ('cocktail-overview',CocktailBasicDetailsForm),

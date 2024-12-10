@@ -24,7 +24,7 @@ class CocktailIngredientsForm(forms.Form):
             )
     
 class CocktailInstructionsForm(forms.Form):
-    instructions = forms.CharField(widget=forms.Textarea)
+    instructions = forms.CharField(widget=forms.Textarea(attrs={'rows': 4}), required=False,)
     
 class PlaceholderForm(forms.Form):
     pass
@@ -44,8 +44,8 @@ class SelectIngredientsForm(forms.Form):
 class AddIngredientDetailsForm(forms.Form):
     quantity = forms.FloatField(min_value=0, required=False)
     unit = forms.ChoiceField(
-        choices=[('slice', 'Slice'), ('wedge', 'Wedge'), ('drop', 'Drop'), 
-                 ('dash', 'Dash'), ('millimeter', 'Millimeter'), 
-                 ('ounce', 'Ounce'), ('cup', 'Cup')],
-        required=False
+        choices=[('Drop','drop'), ('Dash', 'dash'), ('Slice', 'slice'), ('Wedge', 'wedge'), 
+                  ('Millimeter', 'ml'), ('Ounce', 'oz'), ('Cup', 'c')],
+        required=False,
+        initial='Millimeter',
     )

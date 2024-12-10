@@ -1,10 +1,45 @@
 {% extends "base.html" %}
+{% load i18n %}
+
+{% block head %}
+{{ wizard.form.media }}
+{% endblock %}
 {% block content %}
+<div class="cocktail-create-one">
     <h2>Step 1: Basic Details</h2>
-    <form method="post">
+    <form class="cocktail-create-one__form" method="post">
         {% csrf_token %}
         {{ wizard.management_form }}
-        {{ wizard.form.as_p }}
-        <button type="submit">Next</button>
+        {% for field in wizard.form %}
+        <div class="form-group">
+            {{ field.label_tag }}
+            {{ field }}
+            {% if field.errors %}
+            <div class="error-messages">
+                {{ field.errors }}
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+        <div class="form-actions">
+            <a href="{% url 'cocktail-list' %}" class="button button-secondary">Cancel</a>
+            <button class="button button-primary" type="submit">Select Ingredients</button>
+        </div>
     </form>
+</div>
+<style>
+    .cocktail-create-one {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 1rem;
+    }
+    .cocktail-create-one__form {
+        width: 100%;
+    }
+</style>
 {% endblock content %}

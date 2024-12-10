@@ -14,8 +14,12 @@
     --primaryColorBlackHover: rgba(51, 51, 51, .8);
     --dangerColorRed: rgba(220, 53, 69, 1);
     --dangerHoverColorRed: rgba(220, 53, 69, .8);
-    --fontH1Size: 1.75rem;
-    --fontH6Size: 1.25rem;
+    --fontH1Size: 2.5rem;
+    --fontH2Size: 2rem;
+    --fontH3Size: 1.75rem;
+    --fontH4Size: 1.5rem;
+    --fontH5Size: 1.25rem;
+    --fontH6Size: 1rem;
 }
 
 .sr-only {
@@ -26,7 +30,6 @@ body {
     font-size: 1rem;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: var(--primaryColorBlack);
-    color: inherit;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -37,6 +40,23 @@ h1, h2, h3, h4, h5, h6 {
   h1 {
     font-size: var(--fontH1Size);
     font-weight: 500;
+  }
+
+  h2 {
+    font-weight: 500;
+    font-size: var(--fontH2Size);
+  }
+  h3 {
+    font-weight: 500;
+    font-size: var(--fontH3Size);
+  }
+  h4 {
+    font-weight: 500;
+    font-size: var(--fontH4Size);
+  }
+  h5 {
+    font-weight: 500;
+    font-size: var(--fontH5Size);
   }
 
   h6 {
@@ -184,6 +204,7 @@ nav {
     padding: .375rem .75rem;
     font-weight: 400;
     font-size: 1rem;
+    color: var(--primaryColorBlack);
     border-color: #fff;
     background-clip: padding-box;
     border: 1px solid #ced4da;

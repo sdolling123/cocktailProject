@@ -5,16 +5,47 @@
 {{ wizard.form.media }}
 {% endblock %}
 {% block content %}
-    <h2>Step 3: Instructions</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ wizard.management_form }}
-        {{ wizard.form.as_p }}
-        {% if wizard.steps.prev %}
-        <button class="button button-secondary" name="wizard_goto_step" type="submit" value="{{ wizard.steps.first }}">{% translate "Beginning" %}</button>
-        <button class="button button-secondary" name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">{% translate "Go Back" %}</button>
-    {% endif %}
-        <button type="submit">Finish</button>
-    </form>
+    <div class="cocktail-create-four">
+        <h2>Step 4: Instructions</h2>
+        <form class="cocktail-create-four__form" method="post">
+            {% csrf_token %}
+            {{ wizard.management_form }}
+            {% for field in wizard.form %}
+            <div class="form-group">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.errors %}
+                <div class="error-messages">
+                    {{ field.errors }}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+            <div class="form-actions">
+            <a href="{% url 'cocktail-list' %}" class="button button-secondary">Cancel</a>
+            {% if wizard.steps.prev %}
+                <button class="button button-secondary" name="wizard_goto_step" type="submit" value="{{ wizard.steps.first }}">{% translate "Beginning" %}</button>
+                <button class="button button-secondary" name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">{% translate "Go Back" %}</button>
+            {% endif %}
+            <button class="button button-primary" type="submit">Finish</button>
+            </div>
+        </form>
+    </div>
+
+    <style>
+        .cocktail-create-four {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+        .cocktail-create-four__form {
+            width: 100%;
+        }
+    </style>
 {% endblock content %}
 

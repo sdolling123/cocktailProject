@@ -10,7 +10,7 @@
 <div class="cocktail-select-ingredients">
     
     <div class="cocktail-ingredient-select-header">
-        <h1>Ingredients for {{ cocktail.name }}</h1>
+        <h2>Ingredients for {{ cocktail.name }}</h2>
     </div>
     <div class="ingredient-search-wrapper form-group">
         <label for="searchIngredient" class="sr-only">Search for ingredient</label>
@@ -43,12 +43,12 @@
             {% endfor %}
         </div>
         <div class="form-actions select-ingredient-controls">
-            <a href="{% url 'cocktail-list' %}" class="button button-secondary">Back to Cocktails</a>
-            <button type="submit" class="button button-primary">Save Ingredients</button>
+            <a href="{% url 'cocktail-list' %}" class="button button-secondary">Cancel</a>
             {% if wizard.steps.prev %}
-    <button class="button button-secondary" name="wizard_goto_step" type="submit" value="{{ wizard.steps.first }}">{% translate "Beginning" %}</button>
-    <button class="button button-secondary" name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">{% translate "Go Back" %}</button>
-{% endif %}
+            <button class="button button-secondary" name="wizard_goto_step" type="submit" value="{{ wizard.steps.first }}">{% translate "Beginning" %}</button>
+            <button class="button button-secondary" name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">{% translate "Go Back" %}</button>
+            {% endif %}
+            <button type="submit" class="button button-primary">Save Ingredients</button>
         </div>
     </form>
 </div>
