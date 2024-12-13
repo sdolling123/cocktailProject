@@ -3,8 +3,8 @@
 
 
 {% block content %}
-<div class="ingredient-create">
-    <button class="ingredient-create__submit button button-primary" form="ingredient-create__form" name="ingredientEditSubmitBtn" type="submit">Save</button>
+<div class="content-wrapper ingredient-create">
+    
     <div class="ingredient-create__header">
         <h1> {% if ingredient.id %}Update {% else %} Create new {% endif %}ingredient</h1>
     </div>
@@ -30,6 +30,7 @@
                                            hx-trigger="click"
                                            hx-target="#modal-body-content">Delete Ingredient</button>{% else %}{% endif %}
             <a class="button button-secondary" href="{% url 'ingredient-list' %}" type="button">Cancel</a>
+            <button class="ingredient-create__submit button button-primary" form="ingredient-create__form" name="ingredientEditSubmitBtn" type="submit">Save Ingredient</button>
         </div>
     </form>
 </div>
@@ -58,17 +59,6 @@
     });
 </script>
 <style>
-
-    .ingredient-create {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        align-items: center;
-        width: 100%;
-        max-width: 600px;
-        margin: 0 auto;
-        padding: 1rem;
-    }
 
     .ingredient-create__submit {
         align-self: end;

@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="cocktail-wizard-three">
+<div class="content-wrapper cocktail-wizard-three">
     <h2>Step 3: Add Ingredient Details</h2>
     <form method="post" class="mt-1">
         {% csrf_token %}
@@ -40,16 +40,7 @@
 </div>
 
 <style>
-    .cocktail-wizard-three {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        align-items: center;
-        width: 100%;
-        max-width: 600px;
-        margin: 0 auto;
-        padding: 1rem;
-    }
+
     .cocktail-wizard-three form {
         display: flex;
         flex-direction: column;

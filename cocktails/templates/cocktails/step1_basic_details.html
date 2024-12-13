@@ -5,9 +5,9 @@
 {{ wizard.form.media }}
 {% endblock %}
 {% block content %}
-<div class="cocktail-create-one">
-    <h2>Step 1: Basic Details</h2>
-    <form class="cocktail-create-one__form" method="post">
+<div class="content-wrapper">
+    <h2>Step 1 of 4 - Basic Details</h2>
+    <form class="form-container" method="post">
         {% csrf_token %}
         {{ wizard.management_form }}
         {% for field in wizard.form %}
@@ -27,19 +27,9 @@
         </div>
     </form>
 </div>
+
 <style>
-    .cocktail-create-one {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        align-items: center;
-        width: 100%;
-        max-width: 600px;
-        margin: 0 auto;
-        padding: 1rem;
-    }
-    .cocktail-create-one__form {
-        width: 100%;
-    }
+
 </style>
+
 {% endblock content %}

@@ -5,7 +5,7 @@
 {{ wizard.form.media }}
 {% endblock %}
 {% block content %}
-    <div class="cocktail-create-four">
+    <div class="content-wrapper cocktail-create-four">
         <h2>Step 4: Instructions</h2>
         <form class="cocktail-create-four__form" method="post">
             {% csrf_token %}
@@ -33,16 +33,6 @@
     </div>
 
     <style>
-        .cocktail-create-four {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 1rem;
-        }
         .cocktail-create-four__form {
             width: 100%;
         }

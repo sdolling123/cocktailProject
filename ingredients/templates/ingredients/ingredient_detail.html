@@ -1,9 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="ingredient-detail"> <!-- Adjust height based on navbar -->
-    <!-- Edit button aligned to the right of the container -->
-    <a class="ingredient-detail__update button-outline button-secondary" href="{% url 'ingredient-edit' pk=ingredient.id %}">Update</a>
+<div class="content-wrapper ingredient-detail"> <!-- Adjust height based on navbar -->
 
     <!-- Ingredient name and brand centered with some margin -->
     <div class="ingredient-detail__header">
@@ -45,6 +43,7 @@
     <!-- Back button centered and stretched to fit smaller screens -->
     <div class="ingredient-detail__actions">
         <a href="{% url 'ingredient-list' %}" class="button button-secondary">Back to List</a>
+        <a class="ingredient-detail__update button-outline button-secondary" href="{% url 'ingredient-edit' pk=ingredient.id %}">Update Ingredient</a>
     </div>
 </div>
 
@@ -58,18 +57,6 @@
     });
 </script>
 <style>
-    .ingredient-detail {
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        max-width: 1200px;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto;
-        padding: 1rem;
-        gap: 2rem;
-    }
-
     .ingredient-detail__update {
         align-self: flex-end;
     }

@@ -26,7 +26,20 @@ class CocktailDetailView(DetailView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['cocktail_ingredients'] = CocktailIngredient.objects.filter(cocktail = self.object)
+        
+        # Prefetch the ingredient relation to include the brand
+        cocktail_ingredients = CocktailIngredient.objects.filter(cocktail=self.object).select_related('ingredient')
+        
+        # Add ingredients to context with brand details
+        context['cocktail_ingredients'] = [
+            {
+                'ingredient': ci.ingredient, 
+                'quantity': ci.quantity, 
+                'unit': ci.get_abbreviated_unit(),
+                'brand': ci.ingredient.brand  # Access the related Ingredient's brand
+            }
+            for ci in cocktail_ingredients
+        ]
         return context
 
 FORMS = [
@@ -181,6 +194,11 @@ class CocktailWizardView(SessionWizardView):
         if self.steps.current == "step2":
             # Retrieve step 2 data
             step2_data = self.storage.data.get("step_data", {}).get("step2", {})
+            cocktail_name = self.storage.data.get("step_data", {}).get("step1", {}).get("step1-name", "")
+            if isinstance(cocktail_name, list):
+                cocktail_name = cocktail_name[0] if cocktail_name else ""
+            cocktail_name = str(cocktail_name)
+            context["cocktail_name"] = cocktail_name
             context["selected_ingredient_ids"] = step2_data.get("ingredients", []) if step2_data else []
 
         if self.steps.current == "step3":

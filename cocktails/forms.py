@@ -6,7 +6,7 @@ from django.forms import formset_factory
 class CocktailBasicDetailsForm(forms.ModelForm):
     class Meta:
         model = Cocktail
-        fields = ['name', 'type', 'style']
+        fields = ['name', 'creator', 'type', 'style']
 
 class CocktailIngredientsForm(forms.Form):
     ingredients = forms.ModelMultipleChoiceField(queryset=Ingredient.objects.all(), widget=forms.CheckboxSelectMultiple)

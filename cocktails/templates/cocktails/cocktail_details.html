@@ -1,14 +1,23 @@
 {% extends "base.html" %}
-
+{% load custom_filters %}
 {% block content %}
-<div class="ingredient-detail"> <!-- Adjust height based on navbar -->
+<div class="content-wrapper ingredient-detail"> <!-- Adjust height based on navbar -->
     <!-- Edit button aligned to the right of the container -->
-    <a class="ingredient-detail__update button-outline button-secondary" href="#">Update</a>
+    
 
     <!-- Ingredient name and brand centered with some margin -->
     <div class="ingredient-detail__header">
         <h3>{{ cocktail.name }}</h3>
         <h5>{{ cocktail.type }}</h5>
+    </div>
+    <div class="cocktail-detail-recipe">
+        {% for ingredient in cocktail_ingredients %}
+        <div class="cocktail-detail-recipe__ingredient">
+            <span class="cocktail-detail-recipe__amount">{{ ingredient.quantity|format_number }}</span>
+            <span class="cocktail-detail-recipe__unit">{{ ingredient.unit }}</span>
+            <span class="cocktail-detail-recipe__item">{{ ingredient.ingredient }} ({{ ingredient.brand }})</span>
+        </div>
+        {% endfor %}
     </div>
 
     <!-- Instructions centered with larger width for readability -->
@@ -47,6 +56,7 @@
     <!-- Back button centered and stretched to fit smaller screens -->
     <div class="ingredient-detail__actions">
         <a href="{% url 'cocktail-list' %}" class="button button-secondary">Back to List</a>
+        <a class="ingredient-detail__update button-outline button-secondary" href="#">Update Cocktail</a>
     </div>
 </div>
 
@@ -60,17 +70,6 @@
     });
 </script>
 <style>
-    .ingredient-detail {
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        max-width: 1200px;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto;
-        padding: 1rem;
-        gap: 2rem;
-    }
 
     .ingredient-detail__update {
         align-self: flex-end;
@@ -79,6 +78,8 @@
     .ingredient-detail__instructions {
         text-align: center;
         margin-bottom: 1.5rem;
+        align-self: center;
+        max-width: 64ch;
     }
     .ingredient-detail__header h3 {
         margin-bottom: .25rem;
@@ -94,6 +95,31 @@
     #advancedIngrTable table td {
         padding: .75rem;
         border-top: 1px solid #dee2e6;
+    }
+    .cocktail-detail-recipe {
+        align-self: center;
+    }
+    
+    .cocktail-detail-recipe__ingredient {
+        display: grid; /* Use grid for precise column alignment */
+        grid-template-columns: minmax(3rem, auto) minmax(2rem, auto) 1fr; /* Ensures dynamic yet consistent widths for amount and unit */
+        gap: .5rem; /* Add spacing between columns */
+        margin-bottom: 8px; /* Add spacing between rows */
+        align-items: center; /* Aligns content vertically */
+    }
+    
+    .cocktail-detail-recipe__amount {
+        text-align: right; /* Aligns the amount to the right for neatness */
+        white-space: nowrap; /* Prevents wrapping between amount and unit */
+    }
+    
+    .cocktail-detail-recipe__unit {
+        text-align: left; /* Ensures the unit starts near the amount */
+    }
+    
+    .cocktail-detail-recipe__item {
+        text-align: left; /* Left-align ingredient names */
+        white-space: nowrap; /* Prevents wrapping of ingredient names */
     }
 </style>
 {% endblock content %}
