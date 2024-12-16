@@ -91,12 +91,20 @@ nav {
 .navBanner {
     z-index: 400;
 }
+
+.navBannerHeader {
+    padding: 1.5rem 1rem;
+}
+
+.navPanelMenuHeader {
+    padding: 1.5rem 2rem;
+}
+
 .navBannerHeader,
 .navPanelMenuHeader {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.5rem 2rem;
 }
 .navBannerTitle{
     font-size: 1.5rem;
@@ -343,6 +351,29 @@ nav {
     max-width: 1200px; /* Set the maximum width */
 }
 
+/* TAGS */
+.tags {
+    text-decoration: none;
+    padding: .375rem .5rem;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 1rem;
+    font-size: .75rem;
+    border-color: var(--primaryColorBlackTest);
+    /* width: 100%; */
+    color: var(--primaryColorBlackTest);
+    text-align: center;
+    cursor: pointer;
+    transition: color .15s ease-in-out, 
+                background-color .15s ease-in-out, 
+                border-color .15s ease-in-out, 
+                box-shadow .15s ease-in-out
+}
+
+.tags:hover {
+    color: white;
+    background-color: var(--primaryColorBlackTest);
+}
 /* MODAL */
 dialog {
     width: 90%; /* Adjust width as needed */

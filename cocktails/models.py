@@ -35,14 +35,14 @@ class CocktailIngredient(models.Model):
         ('wedge', 'Wedge'),
         ('drop', 'Drop'),
         ('dash', 'Dash'),
-        ('millimeter', 'Millimeter'),
+        ('milliliter', 'Milliliter'),
         ('ounce', 'Ounce'),
         ('cup', 'Cup'),
     ])
     
     def get_abbreviated_unit(self):
         abbreviations = {
-            'millimeter': 'ml',
+            'milliliter': 'ml',
             'ounce': 'oz',
             'cup': 'c',
         }

@@ -8,14 +8,13 @@
     <!-- Ingredient name and brand centered with some margin -->
     <div class="ingredient-detail__header">
         <h3>{{ cocktail.name }}</h3>
-        <h5>{{ cocktail.type }}</h5>
+        <h6 class="ital">{% if cocktail.creator %}cocktail.creator{% else %}Unknown{% endif %}</h6>
     </div>
     <div class="cocktail-detail-recipe">
         {% for ingredient in cocktail_ingredients %}
         <div class="cocktail-detail-recipe__ingredient">
-            <span class="cocktail-detail-recipe__amount">{{ ingredient.quantity|format_number }}</span>
-            <span class="cocktail-detail-recipe__unit">{{ ingredient.unit }}</span>
-            <span class="cocktail-detail-recipe__item">{{ ingredient.ingredient }} ({{ ingredient.brand }})</span>
+            <span class="cocktail-detail-recipe__amount">{{ ingredient.quantity|format_number }}<span>&nbsp;{{ ingredient.unit }}</span></span>
+            <span class="cocktail-detail-recipe__item">{{ ingredient.ingredient }}{% if ingredient.brand == "Homemade" %}{% else %}, <span class="ital">{{ ingredient.brand }}</span>{% endif %}</span>
         </div>
         {% endfor %}
     </div>
@@ -24,51 +23,18 @@
     <div class="ingredient-detail__instructions">
         <p>{{ cocktail.instructions }}</p>
     </div>
-
-    <!-- Advanced Info Toggle Switch -->
-    <div>
-        <label for="showAdvanceIngrsToggle">Show advanced info?</label>
-        <input type="checkbox" role="switch" id="showAdvanceIngrsToggle">
-    </div>
-
-    <!-- Advanced Info Table, hidden by default -->
-    <div id="advancedIngrTable" style="display: none;">
-        <table class="table table-hover w-75 mx-auto">
-            <tbody>
-                {% for ingredient in cocktail_ingredients %}
-                <tr>
-                    <td>ABV</td>
-                    <td>{{ ingredient.name }}</td>
-                </tr>
-                <tr>
-                    <td>Sweetness</td>
-                    <td>{{ ingredient.quantity }}</td>
-                </tr>
-                <tr>
-                    <td>Acid</td>
-                    <td>{{ ingredient.unit }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div class="cocktail-details__tags">
+        <a class="tags" href="#">{{ cocktail.type }}</a>
+        <a class="tags" href="#">{{ cocktail.style }}</a>
     </div>
 
     <!-- Back button centered and stretched to fit smaller screens -->
-    <div class="ingredient-detail__actions">
+    <div class="form-actions">
         <a href="{% url 'cocktail-list' %}" class="button button-secondary">Back to List</a>
         <a class="ingredient-detail__update button-outline button-secondary" href="#">Update Cocktail</a>
     </div>
 </div>
 
-<script>
-    // Toggle visibility of advanced info table
-    const advancedToggle = document.getElementById('showAdvanceIngrsToggle');
-    const ingredientTable = document.getElementById('advancedIngrTable');
-
-    advancedToggle.addEventListener('change', function() {
-        ingredientTable.style.display = advancedToggle.checked ? 'block' : 'none';
-    });
-</script>
 <style>
 
     .ingredient-detail__update {
@@ -77,14 +43,13 @@
     .ingredient-detail__header,
     .ingredient-detail__instructions {
         text-align: center;
-        margin-bottom: 1.5rem;
         align-self: center;
         max-width: 64ch;
     }
     .ingredient-detail__header h3 {
         margin-bottom: .25rem;
     }
-    .ingredient-detail__header h5 {
+    .ingredient-detail__header h6 {
         color: #6c757d;
     }
 
@@ -102,10 +67,10 @@
     
     .cocktail-detail-recipe__ingredient {
         display: grid; /* Use grid for precise column alignment */
-        grid-template-columns: minmax(3rem, auto) minmax(2rem, auto) 1fr; /* Ensures dynamic yet consistent widths for amount and unit */
-        gap: .5rem; /* Add spacing between columns */
-        margin-bottom: 8px; /* Add spacing between rows */
+        grid-template-columns: minmax(3rem, auto) 1fr; /* Ensures dynamic yet consistent widths for amount and unit */
+        column-gap: .5rem;
         align-items: center; /* Aligns content vertically */
+        line-height: 1.6;
     }
     
     .cocktail-detail-recipe__amount {
@@ -113,13 +78,17 @@
         white-space: nowrap; /* Prevents wrapping between amount and unit */
     }
     
-    .cocktail-detail-recipe__unit {
-        text-align: left; /* Ensures the unit starts near the amount */
-    }
-    
     .cocktail-detail-recipe__item {
         text-align: left; /* Left-align ingredient names */
         white-space: nowrap; /* Prevents wrapping of ingredient names */
+    }
+
+    .ital {
+        font-style: italic;
+    }
+    .cocktail-details__tags {
+        align-self: center;
+        padding: .25rem;
     }
 </style>
 {% endblock content %}

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
-
+{% load custom_filters %}
 {% block content %}
 
 <div class="content-wrapper ingredient-list-wrapper">
@@ -30,7 +30,7 @@
             <a href="{% url 'ingredient-detail' pk=ingredient.id %}" type="button" class="ingredient-item">
                 <div class="ingredient-item-header">
                     <h6>{{ ingredient.name }}</h6>
-                    <small>{{ ingredient.ingredient_type }}</small>
+                    <small>{{ ingredient.ingredient_type|replace_underscore }}</small>
                 </div>
                 <img src="{% static 'images/ellipsis-solid.svg' %}" alt="More details about {{ ingredient.name }}">
             </a>

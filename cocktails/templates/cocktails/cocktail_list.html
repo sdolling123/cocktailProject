@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load custom_filters %}
 
 {% block content %}
 <div class="content-wrapper cocktail-list">
@@ -31,7 +32,7 @@
                 <a class="cocktail-item" href={% url 'cocktail-details' pk=cocktail.id %} type="text">
                     <div class="cocktail-item__header">
                         <h6>{{ cocktail.name }}</h6>
-                        <small>{{ cocktail.type }}, {{ cocktail.style }}</small>
+                        <small>{{ cocktail.type|replace_underscore }}, {{ cocktail.style|replace_underscore }}</small>
                     </div>
                     <img src="{% static 'images/ellipsis-solid.svg' %}" alt="More details about {{ cocktail.name }}">
                 </a>
