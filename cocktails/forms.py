@@ -12,7 +12,7 @@ class CocktailIngredientsForm(forms.Form):
     ingredients = forms.ModelMultipleChoiceField(queryset=Ingredient.objects.all(), widget=forms.CheckboxSelectMultiple)
     quantity = forms.FloatField(min_value=0)
     unit = forms.ChoiceField(choices=[('slice', 'Slice'), ('wedge', 'Wedge'), ('drop', 'Drop'), ('dash', 'Dash'),
-                                     ('millimeter', 'Millimeter'), ('ounce', 'Ounce'), ('cup', 'Cup')])
+                                     ('milliliter', 'Milliliter'), ('ounce', 'Ounce'), ('cup', 'Cup')])
 
     def save(self, cocktail):
         for ingredient in self.cleaned_data['ingredients']:
@@ -45,7 +45,41 @@ class AddIngredientDetailsForm(forms.Form):
     quantity = forms.FloatField(min_value=0, required=False)
     unit = forms.ChoiceField(
         choices=[('Drop','drop'), ('Dash', 'dash'), ('Slice', 'slice'), ('Wedge', 'wedge'), 
-                  ('Millimeter', 'ml'), ('Ounce', 'oz'), ('Cup', 'c')],
+                  ('Milliliter', 'ml'), ('Ounce', 'oz'), ('Cup', 'c')],
         required=False,
-        initial='Millimeter',
+        initial='Milliliter',
     )
+    
+class CocktailForm(forms.ModelForm):
+    class Meta:
+        model = Cocktail
+        fields = ['name', 'creator', 'type', 'style', 'instructions']
+        
+    name = forms.CharField(label="Name",label_suffix=":",help_text="This is a required field.",error_messages={"required":"Please fill this out"})
+    instructions = forms.CharField(widget=forms.Textarea(attrs={'rows': 4}), required=False,)
+
+class CocktailIngredientForm(forms.ModelForm):
+    class Meta:
+        model = CocktailIngredient
+        fields = ['ingredient', 'quantity', 'unit']
+    
+    ingredient = forms.ChoiceField(
+        required=False,
+        help_text="Required if quantity and unit have values")
+    # unit = forms.ChoiceField()
+        # widgets = {
+        #     'ingredient': forms.Select(attrs={'class': 'form-control'}),
+        #     'quantity': forms.NumberInput(attrs={'class': 'form-control', 'required': False}),
+        #     'unit': forms.Select(attrs={'class': 'form-control', 'required': False}),
+        # }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        quantity = cleaned_data.get('quantity')
+        ingredient = cleaned_data.get('ingredient')
+
+        # If quantity is provided, ingredient must also be provided
+        if quantity and not ingredient:
+            self.add_error('ingredient', "Ingredient is required if quantity is provided.")
+
+        return cleaned_data

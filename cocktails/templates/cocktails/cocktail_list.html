@@ -32,7 +32,9 @@
                 <a class="cocktail-item" href={% url 'cocktail-details' pk=cocktail.id %} type="text">
                     <div class="cocktail-item__header">
                         <h6>{{ cocktail.name }}</h6>
-                        <small>{{ cocktail.type|replace_underscore }}, {{ cocktail.style|replace_underscore }}</small>
+                        {% if cocktail.type %}
+                            <small>{{ cocktail.type|replace_underscore }}, {{ cocktail.style|replace_underscore }}</small>
+                        {% endif %}
                     </div>
                     <img src="{% static 'images/ellipsis-solid.svg' %}" alt="More details about {{ cocktail.name }}">
                 </a>

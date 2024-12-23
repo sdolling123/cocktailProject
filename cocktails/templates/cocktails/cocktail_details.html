@@ -8,8 +8,9 @@
     <!-- Ingredient name and brand centered with some margin -->
     <div class="ingredient-detail__header">
         <h3>{{ cocktail.name }}</h3>
-        <h6 class="ital">{% if cocktail.creator %}cocktail.creator{% else %}Unknown{% endif %}</h6>
+        <h6 class="ital">{% if cocktail.creator %}{{ cocktail.creator }}{% else %}Unknown{% endif %}</h6>
     </div>
+    {% if cocktail_ingredients %}
     <div class="cocktail-detail-recipe">
         {% for ingredient in cocktail_ingredients %}
         <div class="cocktail-detail-recipe__ingredient">
@@ -18,6 +19,7 @@
         </div>
         {% endfor %}
     </div>
+    {% endif %}
 
     <!-- Instructions centered with larger width for readability -->
     <div class="ingredient-detail__instructions">
@@ -31,7 +33,7 @@
     <!-- Back button centered and stretched to fit smaller screens -->
     <div class="form-actions">
         <a href="{% url 'cocktail-list' %}" class="button button-secondary">Back to List</a>
-        <a class="ingredient-detail__update button-outline button-secondary" href="#">Update Cocktail</a>
+        <a class="ingredient-detail__update button-outline button-secondary" href="{% url 'cocktail-tabbed' %}">Update Cocktail</a>
     </div>
 </div>
 

@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="content-wrapper">
+    <div class="tabs">
+        <div class="tab active" data-tab="1">Overview</div>
+        <div class="tab" data-tab="2">Ingredients</div>
+        <div class="tab" data-tab="3">Instructions</div>
+    </div>
+
+    <form  method="post">
+        {% csrf_token %}
+        <div id="tab-1" class="tab-content active">
+            {% for field in cocktail_form %}
+                {% if field.name != "instructions" %}
+                <div class="form-group">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    <p class="helptext">{{ field.help_text }}</p>
+                    {% if field.errors %}
+                        <div class="error-messages">
+                            {{ field.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        <div id="tab-2" class="tab-content ingredient-tab">
+            {% for field in ingredient_form %}
+            <div class="form-group {% if field.name == 'ingredient' %}ingredient-name{% else %}ingredient-detail-item{% endif %}">
+                {{ field.label_tag }}
+                {{ field }}
+                <p class="helptext">{{ field.help_text }}</p>
+                {% if field.errors %}
+                    <div class="error-messages">
+                        {{ field.errors }}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        </div>
+        <div id="tab-3" class="tab-content">
+            <div class="form-group">
+                {{ cocktail_form.instructions.as_field_group }}
+            </div>
+        </div>
+        <button class="button button-primary" disabled type="submit">Save Cocktail</button>
+    </form>
+</div>
+<style>
+    .ingredient-tab.active {
+        display: flex;
+        /* grid-template-columns: 1fr 1fr 1fr; */
+        gap: .75rem;
+        /* align-items: flex-start; */
+        /* flex-direction: column; */
+        /* flex-wrap: wrap; */
+        width: 100%;
+    }
+    .ingredient-name {
+        flex: 4;
+    }
+    .ingredient-detail-item {
+        flex: 1;
+    }
+
+</style>
+
+    <script>
+        const tabs = document.querySelectorAll('.tab');
+        const contents = document.querySelectorAll('.tab-content');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Deactivate all tabs and contents
+                tabs.forEach(t => t.classList.remove('active'));
+                contents.forEach(c => c.classList.remove('active'));
+
+                // Activate selected tab and corresponding content
+                tab.classList.add('active');
+                document.getElementById(`tab-${tab.getAttribute('data-tab')}`).classList.add('active');
+            });
+        });
+    </script>
+    {% endblock content %}

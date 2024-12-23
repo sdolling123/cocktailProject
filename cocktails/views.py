@@ -1,15 +1,54 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from formtools.wizard.views import SessionWizardView
 from .models import Cocktail, CocktailIngredient
-from .forms import CocktailBasicDetailsForm, CocktailIngredientsForm, CocktailInstructionsForm, PlaceholderForm, SelectIngredientsForm, AddIngredientDetailsForm
+from .forms import CocktailBasicDetailsForm, CocktailIngredientsForm, CocktailInstructionsForm, PlaceholderForm, SelectIngredientsForm, AddIngredientDetailsForm, CocktailForm, CocktailIngredientForm
 from django.contrib import messages
 from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, TemplateView
 from django.views.generic.edit import FormView
 from ingredients.models import Ingredient
 from django.forms import formset_factory
 
 # Create your views here.
+
+class CocktailTabbed(TemplateView):
+    # template_name = 'cocktails/cocktail_tabbed_exp.html'
+    def get(self, request):
+        cocktail_form = CocktailForm()
+        ingredient_form = CocktailIngredientForm()
+        return render(request, 'cocktails/cocktail_tabbed_exp.html', {
+            'cocktail_form': cocktail_form,
+            'ingredient_form': ingredient_form
+        })
+
+    def post(self, request):
+        cocktail_form = CocktailForm(request.POST)
+        ingredient_form = CocktailIngredientForm(request.POST)
+
+        if cocktail_form.is_valid():
+            # Save the cocktail
+            cocktail = cocktail_form.save()
+
+            # Check if any ingredient-related data has been entered
+            if any(request.POST.get(field) for field in ['ingredient', 'quantity', 'unit']):
+                if ingredient_form.is_valid():
+                    # Save the ingredient only if the form is valid
+                    ingredient = ingredient_form.save(commit=False)
+                    ingredient.cocktail = cocktail
+                    ingredient.save()
+                else:
+                    return render(request, 'cocktails/cocktail_tabbed_exp.html', {
+                        'cocktail_form': cocktail_form,
+                        'ingredient_form': ingredient_form
+                    })
+
+            return redirect('cocktail-list')  # Redirect to the cocktail list view
+        
+        return render(request, 'cocktails/cocktail_tabbed_exp.html', {
+            'cocktail_form': cocktail_form,
+            'ingredient_form': ingredient_form
+        })
+
 class CocktailListView(ListView):
     model = Cocktail
     context_object_name = 'cocktails'
@@ -36,7 +75,7 @@ class CocktailDetailView(DetailView):
                 'ingredient': ci.ingredient, 
                 'quantity': ci.quantity, 
                 'unit': ci.get_abbreviated_unit(),
-                'brand': ci.ingredient.brand  # Access the related Ingredient's brand
+                'brand': ci.ingredient.brand  if ci.ingredient else "No brand available"  # Handle None case
             }
             for ci in cocktail_ingredients
         ]

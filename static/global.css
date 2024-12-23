@@ -248,6 +248,13 @@ nav {
     border-color: #4a90e2;
 }
 
+.helptext {
+    font: inherit;
+    color: rgba(106,114,130,1);
+    font-style: italic;
+    font-size: .875rem;
+}
+
 .error-messages {
     color: var(--dangerColorRed);
     font-size: 0.875rem;
@@ -342,6 +349,37 @@ nav {
     display: none;
 }
 
+/* TABS */
+
+.tabs {
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.tab {
+    cursor: pointer;
+    text-align: center;
+    color: rgba(106,114,130,1);
+    font-size: 1rem;
+    font-weight: 500;
+    padding-block-end: .75rem;
+}
+
+.tab.active {
+    border-bottom: 2px solid rgb(78, 78, 78);
+    color: var(--primaryColorBlackTest);
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
 /* COCKTAIL SELECT INGREDIENT */
 .cocktail-ingredient-select__form {
     display: flex;
@@ -353,26 +391,29 @@ nav {
 
 /* TAGS */
 .tags {
-    text-decoration: none;
-    padding: .375rem .5rem;
-    border-width: 1px;
-    border-style: solid;
-    border-radius: 1rem;
-    font-size: .75rem;
-    border-color: var(--primaryColorBlackTest);
-    /* width: 100%; */
-    color: var(--primaryColorBlackTest);
+    display: inline-block;
+    padding-block: .25rem;
+    padding-inline: .5rem;
+    text-transform: capitalize;
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.33;
+    color: #374151; /* Dark gray text */
+    background-color: #f9fafb; /* Light background */
+    border: 1px solid #e5e7eb; /* Light gray border */
+    border-radius: 0.375rem; /* Rounded corners */
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); /* Soft shadow */
     text-align: center;
-    cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
     transition: color .15s ease-in-out, 
-                background-color .15s ease-in-out, 
-                border-color .15s ease-in-out, 
-                box-shadow .15s ease-in-out
+        background-color .15s ease-in-out, 
+        border-color .15s ease-in-out, 
+        box-shadow .15s ease-in-out
 }
 
 .tags:hover {
-    color: white;
-    background-color: var(--primaryColorBlackTest);
+    border-color: rgb(208, 210, 214);
 }
 /* MODAL */
 dialog {
@@ -513,7 +554,6 @@ dialog::backdrop {
     .form-actions {
         grid-column: span 2;
     }
-
     dialog {
         width: 50%; /* Adjust width as needed */
         max-width: 400px; /* Set a max width for responsiveness */
