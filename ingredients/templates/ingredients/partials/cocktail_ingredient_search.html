@@ -8,131 +8,128 @@
         </button>
         <h6>Select ingredients</h6>
         <label for="searchCocktailIngredient" class="sr-only">Select ingredients</label>
-        <input class="ingredient-search-input" type="text" name="searchCocktailIngredient" placeholder="Search...">
+        <input id="searchCocktailIngredient" class="ingredient-search-input" type="text" name="searchCocktailIngredient" placeholder="Search...">
     </div>
 
     <!-- Scrollable List of Ingredients -->
-    <div class="ingredient-search__container">
+    <div class="select-ingredients-list">
         {% for ingredient in ingredients %}
-        <div 
-            class="ingredient-search-item" 
-            data-id="ingredient-{{ingredient.id}}" 
-            data-toggle="select"
-            data-search="true">
-            <div class="ingredient-item-header">
-                <h6>{{ ingredient.name }}</h6>
-                <small>{{ ingredient.brand }}</small>
-            </div>
-            <div class="ingredient-selected-indicator">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-                    <path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/>
-                </svg>
-            </div>
-        </div>
+                <label class="checkbox-container">
+                    <div class="checkbox-container__colOne">
+                        <span class="cocktail-select-ingredient-name">{{ ingredient.name }}
+                        </span>
+                        <div class="cocktail-select-type-brand">
+                            {% if ingredient.brand %}
+                            <span class="cocktail-select-brand">{{ ingredient.brand}}</span>
+                            <span> &#8226; </span>
+                            {% endif %}
+                            <span class="cocktail-select-type">{{ ingredient.get_ingredient_type_display }}</span>
+                            {% if ingredient.abv %}
+                            <span> &#8226; </span>
+                            <span class="cocktail-select-ingredient-abv">{{ ingredient.abv }}%</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <input data-dismiss="modal" type="checkbox" name="ingredients" value="{{ ingredient.id }}"
+                           {% if ingredient.id|stringformat:"s" in selected_ingredient_ids %}checked{% endif %}>
+                </label>
         {% endfor %}
-    </div>
-
-    <!-- Button at the Bottom -->
-    <div class="ingredient-search-footer">
-        <button 
-            id="ingredient-add-button" 
-            type="submit" 
-            class="button button-primary" 
-            disabled 
-            data-dismiss="modal"
-            >Add selected</button>
     </div>
 </div>
 
+<script>
+    const searchSelectInput = document.querySelector('input[name="searchCocktailIngredient"]');
+    const selectIngredientItems = document.querySelectorAll('.checkbox-container');
+
+    searchSelectInput.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase().trim();
+
+        selectIngredientItems.forEach(item => {
+            const ingredientName = item.querySelector('.cocktail-select-ingredient-name').textContent.toLowerCase();
+            const ingredientType = item.querySelector('.cocktail-select-type').textContent.toLowerCase();
+            const ingredientAbv = item.querySelector('.cocktail-select-ingredient-abv');
+            const ingredientBrand = item.querySelector('.cocktail-select-brand');
+
+            // Initialize variables for ABV and Brand, ensuring they are only set if the elements exist
+            let ingredientAbvLower = '';
+            let ingredientBrandLower = '';
+
+            if (ingredientAbv) {
+                ingredientAbvLower = ingredientAbv.textContent.toLowerCase();
+            }
+
+            if (ingredientBrand) {
+                ingredientBrandLower = ingredientBrand.textContent.toLowerCase();
+            }
+
+            // Check if any of the fields match the search term
+            const isVisible = ingredientName.includes(searchTerm) ||
+                            ingredientType.includes(searchTerm) ||
+                            ingredientAbvLower.includes(searchTerm) || // Only check ABV if it exists
+                            ingredientBrandLower.includes(searchTerm); // Only check Brand if it exists
+
+            item.style.display = isVisible ? 'flex' : 'none';
+        });
+    });
+</script>
+
 <style>
-/* Container for the search component */
-.ingredient-search-comp {
-    display: flex;
-    flex-direction: column;
-    max-height: 80vh; /* Limit modal height */
-    border-radius: .5rem;
-    
-}
+    .select-ingredients-list {
+        overflow-y: auto;
+        max-height: 60vh;
+        min-height: 60vh;
+        
+    }
+    .cocktail-ingredient-select-header {
+        text-align: center;
+    }
+    .checkbox-container{
+        display: flex;
+        width: 100%;
+        border-bottom: 1px solid #ced4da;
+        padding: 1rem;
+        color: var(--primaryColorBlack);
+        cursor: pointer;
+    }
+    .checkbox-container:hover {
+        background-color: rgba(0,0,0,.025);
+        border-radius: .25rem;
+    }
+    .checkbox-container input {
+        margin-left: auto;
+    }
+    .cocktail-select-ingredient-abv {
+        font-weight: 400;
+        color: #6c757d;
+        font-size: .875rem;
+    }
 
-/* Search bar at the top */
-.ingredient-search-header {
-    margin-bottom: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: .75rem;
-}
+    .cocktail-select-ingredient-name {
+        font-weight: 500;
+    }
+    .checkbox-container__colOne {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+        gap: .5rem;
+    }
+    .cocktail-select-type-brand {
+        color: #6c757d;
+    }
+    .cocktail-select-brand {
+        font-style: italic;
+        font-weight: 500;
+        color: #6c757d;
+        font-size: .875rem;
+    }
+    .cocktail-select-type {
+        text-transform: capitalize;
+        font-size: .875rem;
+        color: #6c757d;
+    }
+    .select-ingredient-controls {
+        margin-top: 1rem;
+    }
 
-.ingredient-search-header button {
-    align-self: flex-end;
-}
-
-.ingredient-search-input {
-    width: 100%;
-    padding: 8px;
-    font-size: 16px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-}
-
-/* Scrollable ingredient list */
-.ingredient-search__container {
-    flex: 1;
-    overflow-y: auto;
-    /* border: 1px solid #ddd; */
-    border-radius: 4px;
-    /* background-color: #f9f9f9; */
-}
-
-/* Individual ingredient item */
-.ingredient-search-item {
-    display: flex;
-    justify-content: space-between;
-    cursor: pointer;
-    align-items: center;
-    padding: .5rem;
-    border-bottom: 1px solid #ced4da;
-    transition: background-color 0.2s ease;
-}
-
-.ingredient-search-item:hover {
-    background-color: rgba(0,0,0,.025);
-}
-
-.ingredient-selected-indicator svg {
-    display: none;
-    width: 20px;
-    height: 20px;
-    fill: #007bff; /* Customize the color */
-    transition: opacity 0.2s ease-in-out;
-}
-
-.ingredient-search-item.selected svg {
-    display: block;
-}
-
-.ingredient-search-item:last-child {
-    border-bottom: none;
-}
-.ingredient-item-header {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-}
-.ingredient-item-header h6 {
-    margin-bottom: .25rem;
-    margin-top: 0;
-    font-size: 1rem;
-    font-weight: 500;
-}
-
-.ingredient-item-header small {
-    color: #6c757d;
-    font-size: .875rem;
-}
-/* Footer at the bottom */
-.ingredient-search-footer {
-    display: block;
-    width: 100%;
-    margin-top: 1rem;
-}
 </style>

@@ -1,9 +1,10 @@
 from django.urls import path
-from .views import CocktailListView, CocktailCreationWizard, SelectIngredientsView, CocktailWizardView, CocktailDetailView, CocktailTabbed
+from .views import CocktailListView, CocktailCreationWizard, SelectIngredientsView, CocktailWizardView, CocktailDetailView, CocktailTabbed, CocktailIngredientOptions
 from ingredients.views import IngredientComponentListView
 
 urlpatterns = [
     path('',CocktailListView.as_view(),name='cocktail-list'),
+    path('ingredient-options/',CocktailIngredientOptions.as_view(),name='ingredient-options'),
     path('create/',CocktailCreationWizard.as_view(),name='cocktail-create'),
     path('cocktail-wizard/',CocktailWizardView.as_view(),name='cocktail-wizard'),
     path('cocktail-tabbed/',CocktailTabbed.as_view(),name='cocktail-tabbed'),

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+    <div class="content-wrapper">
+        <div class="ingredient-input form-group">
+            <label for="ingredient-input">Ingredient</label>
+        <input data-toggle="modal" 
+               type="text" 
+               id="ingredient-input" 
+               placeholder="Select ingredient..."
+               hx-get="{% url 'cocktail-ingredient-search' %}"
+               hx-trigger="click"
+               hx-target="#modal-body-content"
+               readonly>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    {% include "partials/modal.html" %}
+    <script>
+        const deleteButton = document.getElementById('ingredient-input');
+        const overlayIngredient = document.getElementById('overlay');
+        const ingredientDialog = document.getElementById('favDialog');
+        
+        // Open modal for any element with [data-toggle="modal"]
+        document.addEventListener('click', (event) => {
+            if (event.target.hasAttribute('data-toggle') && event.target.getAttribute('data-toggle') === 'modal') {
+                console.log("open")
+                ingredientDialog.showModal(); // Open the <dialog> element
+            }
+        });
+        // Close modal for any element with [data-dismiss="modal"]
+        document.addEventListener('click', (event) => {
+            if (event.target.hasAttribute('data-dismiss') && event.target.getAttribute('data-dismiss') === 'modal') {
+                console.log("close")
+                ingredientDialog.close(); // Close the <dialog> element
+            }
+        });
+    </script>
+{% endblock content %}
