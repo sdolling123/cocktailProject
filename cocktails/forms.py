@@ -66,12 +66,6 @@ class CocktailIngredientForm(forms.ModelForm):
     ingredient = forms.ChoiceField(
         required=False,
         help_text="Required if quantity and unit have values")
-    # unit = forms.ChoiceField()
-        # widgets = {
-        #     'ingredient': forms.Select(attrs={'class': 'form-control'}),
-        #     'quantity': forms.NumberInput(attrs={'class': 'form-control', 'required': False}),
-        #     'unit': forms.Select(attrs={'class': 'form-control', 'required': False}),
-        # }
 
     def clean(self):
         cleaned_data = super().clean()

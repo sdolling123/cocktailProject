@@ -14,43 +14,40 @@
         <div id="tab-1" class="tab-content active">
             {% for field in cocktail_form %}
                 {% if field.name != "instructions" %}
-                <div class="form-group">
+                    <div class="form-group">
                     {{ field.label_tag }}
                     {{ field }}
                     <p class="helptext">{{ field.help_text }}</p>
                     {% if field.errors %}
                         <div class="error-messages">
-                            {{ field.errors }}
+                        {{ field.errors }}
                         </div>
                     {% endif %}
-                </div>
+                    </div>
                 {% endif %}
             {% endfor %}
         </div>
-        <div id="tab-2" class="tab-content ingredient-tab">
-            {% for field in ingredient_form %}
-            <div class="form-group {% if field.name == 'ingredient' %}ingredient-name{% else %}ingredient-detail-item{% endif %}">
-                {{ field.label_tag }}
-                {{ field }}
-                <p class="helptext">{{ field.help_text }}</p>
-                {% if field.errors %}
-                    <div class="error-messages">
-                        {{ field.errors }}
-                    </div>
-                {% endif %}
-            </div>
-        {% endfor %}
+        <div id="tab-2" class="tab-content">
+            {% include "cocktails/partials/ingredient_form_component.html" %}
         </div>
-        <div id="tab-3" class="tab-content">
-            <div class="form-group">
-                {{ cocktail_form.instructions.as_field_group }}
+            <div id="tab-3" class="tab-content">
+                <div class="form-group">
+                    {{ cocktail_form.instructions.as_field_group }}
+                </div>
             </div>
-        </div>
-        <button class="button button-primary" disabled type="submit">Save Cocktail</button>
+        <button class="button button-primary" type="submit">Save Cocktail</button>
+        <button class="button button-secondary" 
+                id="add-ingredient"
+                type="button"
+                hx-get="{% url 'ingredient-options' %}"
+                hx-target="#tab-2"
+                hx-swap="beforeend">Add Ingredient</button>
     </form>
 </div>
+    <!-- Modal -->
+    {% include "partials/modal.html" %}
 <style>
-    .ingredient-tab.active {
+    .ingredient-tab {
         display: flex;
         /* grid-template-columns: 1fr 1fr 1fr; */
         gap: .75rem;
@@ -65,22 +62,64 @@
     .ingredient-detail-item {
         flex: 1;
     }
+    #add-ingredient {
+        display: none;
+    }
+    #add-ingredient.active{
+        display: revert;
+    }
+    .remove-ingredient {
+        display: flex;
+        align-items: center;
+        margin-bottom: .5rem;
+
+    }
+    .remove-ingredient button {
+        border: none;
+        background: none;
+        cursor: pointer;
+    }
+
+    .remove-ingredient svg {
+        width: 1rem;
+    }
 
 </style>
 
     <script>
+        const deleteButton = document.getElementById('ingredient-input');
+        const overlayIngredient = document.getElementById('overlay');
+        const ingredientDialog = document.getElementById('favDialog');
+        
+        // Open modal for any element with [data-toggle="modal"]
+        document.addEventListener('click', (event) => {
+            if (event.target.hasAttribute('data-toggle') && event.target.getAttribute('data-toggle') === 'modal') {
+                ingredientDialog.showModal(); // Open the <dialog> element
+            }
+        });
+        // Close modal for any element with [data-dismiss="modal"]
+        document.addEventListener('click', (event) => {
+            if (event.target.hasAttribute('data-dismiss') && event.target.getAttribute('data-dismiss') === 'modal') {
+                ingredientDialog.close(); // Close the <dialog> element
+            }
+        });
         const tabs = document.querySelectorAll('.tab');
         const contents = document.querySelectorAll('.tab-content');
+        const addIngredient = document.getElementById('add-ingredient');
 
         tabs.forEach(tab => {
             tab.addEventListener('click', () => {
                 // Deactivate all tabs and contents
                 tabs.forEach(t => t.classList.remove('active'));
                 contents.forEach(c => c.classList.remove('active'));
+                addIngredient.classList.remove('active');
 
                 // Activate selected tab and corresponding content
                 tab.classList.add('active');
                 document.getElementById(`tab-${tab.getAttribute('data-tab')}`).classList.add('active');
+                if (tab.getAttribute('data-tab') === '2') {
+                    addIngredient.classList.add('active');
+                }
             });
         });
     </script>

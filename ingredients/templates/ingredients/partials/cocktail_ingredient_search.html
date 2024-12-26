@@ -6,15 +6,15 @@
         <button class="modal-header__closeImg" data-dismiss="modal">
             <img src="{% static 'images/xmark-solid.svg'%}" alt="closeModal">
         </button>
-        <h6>Select ingredients</h6>
-        <label for="searchCocktailIngredient" class="sr-only">Select ingredients</label>
-        <input id="searchCocktailIngredient" class="ingredient-search-input" type="text" name="searchCocktailIngredient" placeholder="Search...">
+        <h5>Add an ingredient</h5>
+        <label for="searchCocktailIngredient" class="sr-only">Add an ingredient</label>
+        <input id="searchCocktailIngredient" class="ingredient-search-input" type="text" name="searchCocktailIngredient" placeholder="Search..." data-popup="search">
     </div>
 
     <!-- Scrollable List of Ingredients -->
     <div class="select-ingredients-list">
         {% for ingredient in ingredients %}
-                <label class="checkbox-container">
+                <button class="checkbox-container" data-dismiss="modal" data-ingredient-item-id="{{ ingredient.id }}" data-ingredient-item-name="{{ ingredient.name }}">
                     <div class="checkbox-container__colOne">
                         <span class="cocktail-select-ingredient-name">{{ ingredient.name }}
                         </span>
@@ -30,47 +30,16 @@
                             {% endif %}
                         </div>
                     </div>
-                    <input data-dismiss="modal" type="checkbox" name="ingredients" value="{{ ingredient.id }}"
-                           {% if ingredient.id|stringformat:"s" in selected_ingredient_ids %}checked{% endif %}>
-                </label>
+                    <span class="item-select-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 144L48 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l144 0 0 144c0 17.7 14.3 32 32 32s32-14.3 32-32l0-144 144 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-144 0 0-144z"/></svg>
+                    </span>
+                </button>
         {% endfor %}
     </div>
 </div>
 
 <script>
-    const searchSelectInput = document.querySelector('input[name="searchCocktailIngredient"]');
-    const selectIngredientItems = document.querySelectorAll('.checkbox-container');
 
-    searchSelectInput.addEventListener('input', (e) => {
-        const searchTerm = e.target.value.toLowerCase().trim();
-
-        selectIngredientItems.forEach(item => {
-            const ingredientName = item.querySelector('.cocktail-select-ingredient-name').textContent.toLowerCase();
-            const ingredientType = item.querySelector('.cocktail-select-type').textContent.toLowerCase();
-            const ingredientAbv = item.querySelector('.cocktail-select-ingredient-abv');
-            const ingredientBrand = item.querySelector('.cocktail-select-brand');
-
-            // Initialize variables for ABV and Brand, ensuring they are only set if the elements exist
-            let ingredientAbvLower = '';
-            let ingredientBrandLower = '';
-
-            if (ingredientAbv) {
-                ingredientAbvLower = ingredientAbv.textContent.toLowerCase();
-            }
-
-            if (ingredientBrand) {
-                ingredientBrandLower = ingredientBrand.textContent.toLowerCase();
-            }
-
-            // Check if any of the fields match the search term
-            const isVisible = ingredientName.includes(searchTerm) ||
-                            ingredientType.includes(searchTerm) ||
-                            ingredientAbvLower.includes(searchTerm) || // Only check ABV if it exists
-                            ingredientBrandLower.includes(searchTerm); // Only check Brand if it exists
-
-            item.style.display = isVisible ? 'flex' : 'none';
-        });
-    });
 </script>
 
 <style>
@@ -80,12 +49,20 @@
         min-height: 60vh;
         
     }
-    .cocktail-ingredient-select-header {
-        text-align: center;
+    .ingredient-search-header {
+        display: flex;
+        flex-direction: column;
+        gap:.5rem;
+    }
+    .modal-header__closeImg {
+        align-self: flex-end;
     }
     .checkbox-container{
         display: flex;
+        align-items: center;
         width: 100%;
+        background-color: transparent;
+        border: none;
         border-bottom: 1px solid #ced4da;
         padding: 1rem;
         color: var(--primaryColorBlack);
@@ -130,6 +107,16 @@
     }
     .select-ingredient-controls {
         margin-top: 1rem;
+    }
+    .item-select-icon svg {
+        opacity: 0;
+        width: .75rem;
+        text-align: center;
+        color:inherit;
+        transition: opacity 75ms ease-in;
+        }
+    .checkbox-container:hover .item-select-icon > svg {
+        opacity: 1;
     }
 
 </style>

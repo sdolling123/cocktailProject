@@ -74,7 +74,7 @@ class CocktailDetailView(DetailView):
             {
                 'ingredient': ci.ingredient, 
                 'quantity': ci.quantity, 
-                'unit': ci.get_abbreviated_unit(),
+                'unit': ci.get_unit_display(),
                 'brand': ci.ingredient.brand  if ci.ingredient else "No brand available"  # Handle None case
             }
             for ci in cocktail_ingredients
@@ -345,6 +345,6 @@ class CocktailIngredientOptions(TemplateView):
 
     def get(self, request):
         ingredient_form = CocktailIngredientForm()
-        return render(request, 'cocktails/partials/ingredient_options.html', {
+        return render(request, 'cocktails/partials/ingredient_form_component.html', {
             'ingredient_form': ingredient_form
         })

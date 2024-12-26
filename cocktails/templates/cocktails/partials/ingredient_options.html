@@ -2,18 +2,49 @@
 {% load static %}
 {% block content %}
     <div class="content-wrapper">
-        <div class="ingredient-input form-group">
-            <label for="ingredient-input">Ingredient</label>
-        <input data-toggle="modal" 
-               type="text" 
-               id="ingredient-input" 
-               placeholder="Select ingredient..."
-               hx-get="{% url 'cocktail-ingredient-search' %}"
-               hx-trigger="click"
-               hx-target="#modal-body-content"
-               readonly>
-        </div>
+        <form  method="post">
+            {% csrf_token %}
+            {% for field in ingredient_form %}
+                {% if field.name == 'ingredient' %}
+                <div class="form-group ingredient-name">
+                    {{ ingredient_form.ingredient.label_tag }}
+                        <input 
+                            type="text"
+                            name="ingredient"
+                            value="{{ ingredient_form.ingredient.value }}" 
+                            class="form-control"
+                            data-toggle="modal"
+                            hx-get="{% url 'cocktail-ingredient-search' %}"
+                            hx-trigger="click"
+                            hx-target="#modal-body-content"
+                            readonly
+                        />
+                        <p class="helptext">{{ ingredient_form.ingredient.help_text }}</p>
+                        {% if ingredient_form.ingredient.errors %}
+                            <div class="error-messages">
+                                {{ ingredient_form.ingredient.errors }}
+                            </div>
+                    </div>
+                {% else %}
+                    <div class="form-group ingredient-detail-item">
+                        {{ field.label_tag }}
+                        {{ field }}
+                        <p class="helptext">{{ field.help_text }}</p>
+                        {% if field.errors %}
+                            <div class="error-messages">
+                                {{ field.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </form>
     </div>
+    <style>
+        .ingredient-input input {
+            cursor: pointer;
+        }
+    </style>
 
     <!-- Modal -->
     {% include "partials/modal.html" %}
@@ -25,16 +56,53 @@
         // Open modal for any element with [data-toggle="modal"]
         document.addEventListener('click', (event) => {
             if (event.target.hasAttribute('data-toggle') && event.target.getAttribute('data-toggle') === 'modal') {
-                console.log("open")
                 ingredientDialog.showModal(); // Open the <dialog> element
             }
         });
         // Close modal for any element with [data-dismiss="modal"]
         document.addEventListener('click', (event) => {
             if (event.target.hasAttribute('data-dismiss') && event.target.getAttribute('data-dismiss') === 'modal') {
-                console.log("close")
                 ingredientDialog.close(); // Close the <dialog> element
             }
         });
+
+        // Search ingredient list popup [data-popup="search"]
+        document.addEventListener('click', (event) => {
+            if (event.target.hasAttribute('data-popup')) {
+                const searchSelectInput = document.querySelector('input[name="searchCocktailIngredient"]');
+                const selectIngredientItems = document.querySelectorAll('.checkbox-container');
+            
+                searchSelectInput.addEventListener('input', (e) => {
+                    const searchTerm = e.target.value.toLowerCase().trim();
+            
+                    selectIngredientItems.forEach(item => {
+                        const ingredientName = item.querySelector('.cocktail-select-ingredient-name').textContent.toLowerCase();
+                        const ingredientType = item.querySelector('.cocktail-select-type').textContent.toLowerCase();
+                        const ingredientAbv = item.querySelector('.cocktail-select-ingredient-abv');
+                        const ingredientBrand = item.querySelector('.cocktail-select-brand');
+            
+                        // Initialize variables for ABV and Brand, ensuring they are only set if the elements exist
+                        let ingredientAbvLower = '';
+                        let ingredientBrandLower = '';
+            
+                        if (ingredientAbv) {
+                            ingredientAbvLower = ingredientAbv.textContent.toLowerCase();
+                        }
+            
+                        if (ingredientBrand) {
+                            ingredientBrandLower = ingredientBrand.textContent.toLowerCase();
+                        }
+            
+                        // Check if any of the fields match the search term
+                        const isVisible = ingredientName.includes(searchTerm) ||
+                                        ingredientType.includes(searchTerm) ||
+                                        ingredientAbvLower.includes(searchTerm) || // Only check ABV if it exists
+                                        ingredientBrandLower.includes(searchTerm); // Only check Brand if it exists
+            
+                        item.style.display = isVisible ? 'flex' : 'none';
+                    });
+                });
+            }
+        })
     </script>
 {% endblock content %}
