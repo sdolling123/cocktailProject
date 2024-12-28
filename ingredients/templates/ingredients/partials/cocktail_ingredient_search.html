@@ -14,7 +14,10 @@
     <!-- Scrollable List of Ingredients -->
     <div class="select-ingredients-list">
         {% for ingredient in ingredients %}
-                <button class="checkbox-container" data-dismiss="modal" data-ingredient-item-id="{{ ingredient.id }}" data-ingredient-item-name="{{ ingredient.name }}">
+                <button class="checkbox-container" 
+                        data-ingredient-item-id="{{ ingredient.id }}" 
+                        data-ingredient-item-name="{{ ingredient.name }}"
+                        hx-on:click="populateIngredientField('{{ ingredient.name }}','{{ ingredient.id }}')">
                     <div class="checkbox-container__colOne">
                         <span class="cocktail-select-ingredient-name">{{ ingredient.name }}
                         </span>

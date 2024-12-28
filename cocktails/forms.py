@@ -2,6 +2,7 @@ from django import forms
 from .models import Cocktail, CocktailIngredient
 from ingredients.models import Ingredient
 from django.forms import formset_factory
+import uuid
 
 class CocktailBasicDetailsForm(forms.ModelForm):
     class Meta:
@@ -63,9 +64,28 @@ class CocktailIngredientForm(forms.ModelForm):
         model = CocktailIngredient
         fields = ['ingredient', 'quantity', 'unit']
     
-    ingredient = forms.ChoiceField(
-        required=False,
-        help_text="Required if quantity and unit have values")
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        unique_id = uuid.uuid4().hex  # Generate a unique ID for this form instance
+        self.fields['ingredient'].widget.attrs.update({
+            'class': 'hidden',
+            'id': f'ingredient_id_{unique_id}'
+        })
+        self.fields['quantity'].widget.attrs.update({
+            # 'class': 'select-as-input',
+            'id': f'ingredient_quantity_{unique_id}'
+        })
+        self.fields['unit'].widget.attrs.update({
+            # 'class': 'select-as-input',
+            'id': f'ingredient_unit_{unique_id}'
+        })
+    
+    # Define the 'ingredient' field as a Select field
+    # ingredient = forms.ModelChoiceField(
+    #     queryset=Ingredient.objects.all(),
+    #     widget=forms.Select(attrs={'class': 'select-as-input', 'id':f'ingredient_name_{unique_id}'}),  # Add a class for styling/identification
+    #     required=False,
+    # )
 
     def clean(self):
         cleaned_data = super().clean()

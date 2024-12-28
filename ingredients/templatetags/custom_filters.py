@@ -39,3 +39,16 @@ def format_number(value):
         return value  # Return original value otherwise
     except (ValueError, TypeError):
         return value  # In case of error, return original value
+    
+@register.filter
+def extract_suffix(value):
+    """
+    Extracts the string after the second underscore in the input string.
+    Example:
+        Input: "ingredient_id_9762d864c39e46cdb41f5ee492d92ef3"
+        Output: "9762d864c39e46cdb41f5ee492d92ef3"
+    """
+    if not isinstance(value, str):
+        return value
+    parts = value.split("_", 2)
+    return parts[2] if len(parts) > 2 else ""

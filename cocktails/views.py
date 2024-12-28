@@ -346,5 +346,5 @@ class CocktailIngredientOptions(TemplateView):
     def get(self, request):
         ingredient_form = CocktailIngredientForm()
         return render(request, 'cocktails/partials/ingredient_form_component.html', {
-            'ingredient_form': ingredient_form
+            'ingredient_form': ingredient_form,
         })

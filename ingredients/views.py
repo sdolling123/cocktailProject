@@ -19,7 +19,13 @@ class IngredientComponentListView(ListView):
     model = Ingredient
     context_object_name = 'ingredients'
     template_name = 'ingredients/partials/cocktail_ingredient_search.html'
-
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        field_id = self.request.GET.get('field_id')
+        context['field_id'] = field_id
+        return context
+    
     def get_queryset(self):
         # Sort the ingredients alphabetically by name
         return Ingredient.objects.all().order_by("name")

@@ -1,0 +1,14 @@
+{% for field in cocktail_form %}
+    {% if field.name != "instructions" %}
+        <div class="form-group">
+        {{ field.label_tag }}
+        {{ field }}
+        <p class="helptext">{{ field.help_text }}</p>
+        {% if field.errors %}
+            <div class="error-messages">
+            {{ field.errors }}
+            </div>
+        {% endif %}
+        </div>
+    {% endif %}
+{% endfor %}
