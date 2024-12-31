@@ -69,15 +69,18 @@ class CocktailIngredientForm(forms.ModelForm):
         unique_id = uuid.uuid4().hex  # Generate a unique ID for this form instance
         self.fields['ingredient'].widget.attrs.update({
             'class': 'hidden',
-            'id': f'ingredient_id_{unique_id}'
+            'id': f'ingredient_id_{unique_id}',
+            'name': f'ingredient_id_{unique_id}'
         })
         self.fields['quantity'].widget.attrs.update({
             # 'class': 'select-as-input',
-            'id': f'ingredient_quantity_{unique_id}'
+            'id': f'ingredient_quantity_{unique_id}',
+            'name': f'ingredient_quantity_{unique_id}'
         })
         self.fields['unit'].widget.attrs.update({
             # 'class': 'select-as-input',
-            'id': f'ingredient_unit_{unique_id}'
+            'id': f'ingredient_unit_{unique_id}',
+            'name': f'ingredient_unit_{unique_id}'
         })
     
     # Define the 'ingredient' field as a Select field

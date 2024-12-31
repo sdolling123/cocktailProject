@@ -1,0 +1,18 @@
+{% load static %}
+
+<div class="modal-header">
+    <button class="modal-header__closeImg">
+        <img src="{% static 'images/xmark-solid.svg'%}" alt="closeModal">
+    </button>
+</div>
+<form action="{% url 'cocktail-delete' pk=cocktail.id %}" method="POST">
+    {% csrf_token %}
+
+<div class="modal-body">
+    <p>Are you sure you would like to remove this cocktail?</p> <p><strong>This action cannot be undone.</strong></p>
+</div>
+<div class="modal-footer">
+    <button id="delete-modal-cancel" data-dismiss="modal" type="button" alt="closeModal" class="button button-secondary">Cancel</button>
+    <button type="submit" class="button button-danger" >Confirm Delete</button>
+</div>
+</form>

@@ -33,9 +33,38 @@
     <!-- Back button centered and stretched to fit smaller screens -->
     <div class="form-actions">
         <a href="{% url 'cocktail-list' %}" class="button button-secondary">Back to List</a>
-        <a class="ingredient-detail__update button-outline button-secondary" href="{% url 'cocktail-tabbed' %}">Update Cocktail</a>
+        <a class="ingredient-detail__delete button button-danger" 
+           data-toggle="modal"
+           hx-get="{% url 'cocktail-confirm-delete' pk=cocktail.id %}"
+           hx-trigger="click"
+           hx-target="#modal-body-content">Delete Cocktail</a>
+        <a class="ingredient-detail__update button-outline button-secondary" href="{% url 'cocktail-edit' pk=cocktail.id %}">Update Cocktail</a>
     </div>
 </div>
+
+<!-- Modal -->
+{% include "../partials/modal.html" %}
+
+<script>
+    const deleteButton = document.querySelector('.ingredient-detail__delete');
+    const overlayIngredient = document.getElementById('overlay');
+    const ingredientDialog = document.getElementById('favDialog');
+    
+    // Open modal for any element with [data-toggle="modal"]
+    document.addEventListener('click', (event) => {
+        if (event.target.hasAttribute('data-toggle') && event.target.getAttribute('data-toggle') === 'modal') {
+            console.log("open")
+            ingredientDialog.showModal(); // Open the <dialog> element
+        }
+    });
+    // Close modal for any element with [data-dismiss="modal"]
+    document.addEventListener('click', (event) => {
+        if (event.target.hasAttribute('data-dismiss') && event.target.getAttribute('data-dismiss') === 'modal') {
+            console.log("close")
+            ingredientDialog.close(); // Close the <dialog> element
+        }
+    });
+</script>
 
 <style>
 
@@ -69,7 +98,7 @@
     
     .cocktail-detail-recipe__ingredient {
         display: grid; /* Use grid for precise column alignment */
-        grid-template-columns: minmax(3rem, auto) 1fr; /* Ensures dynamic yet consistent widths for amount and unit */
+        grid-template-columns: minmax(4rem, auto) 1fr; /* Ensures dynamic yet consistent widths for amount and unit */
         column-gap: .5rem;
         align-items: center; /* Aligns content vertically */
         line-height: 1.6;

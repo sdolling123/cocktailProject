@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load custom_filters %}
 {% block content %}
 
 <div class="content-wrapper">
@@ -15,7 +15,49 @@
             {% include "cocktails/partials/cocktail_create_tab_one.html" %}
         </div>
         <div id="tab-2" class="tab-content">
-            {% include "cocktails/partials/ingredient_form_component.html" %}
+            {% for ingredient_form in ingredient_forms %}
+                <div class="ingredient-tab">
+                    {% for field in ingredient_form %}
+                        {% if field.name == 'ingredient' %}
+                        <div class="form-group ingredient-name">
+                            <label class="" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% with field_value=field.value|stringformat:"s" %}
+                            <input type="text"
+                                id="ingredient_name_{{ field.field.widget.attrs.id|extract_suffix}}"
+                                data-toggle="modal"
+                                value="{% for choice in field.field.choices %}{% if choice.0|stringformat:'s' == field_value %}{{ choice.1 }}{% endif %}{% endfor %}"
+                                data-item-id="{{ field.field.widget.attrs.id|extract_suffix}}"
+                                hx-vals='{"field_id": "ingredient_name_{{ field.field.widget.attrs.id|extract_suffix}}"}'
+                                hx-get="{% url 'cocktail-ingredient-search' %}"
+                                hx-trigger="click"
+                                hx-target="#modal-body-content">
+                            {% endwith %}
+                            <!-- Render help text -->
+                            {% if field.help_text %}
+                                <p class="helptext">{{ field.help_text }}</p>
+                            {% endif %}
+                            <!-- Render errors -->
+                            {% if field.errors %}
+                                <div class="error-messages">
+                                    {{ field.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        {% elif field.name == 'unit' %}
+                            <div class="form-group ingredient-detail-item">
+                                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                {{ field }}
+                            </div>
+                        {% else %}
+                        <div class="form-group ingredient-detail-item">
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% endfor %}
         </div>
             <div id="tab-3" class="tab-content">
                 {% include "cocktails/partials/cocktail_create_tab_three.html" %}

@@ -3,8 +3,14 @@
     {% for field in ingredient_form %}
         {% if field.name == 'ingredient' %}
             <div class="form-group ingredient-name">
-                <label for="{{ field.field.widget.attrs.id }}">{{ field.label }}</label>
-                {{ field }}
+                <label class="" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                <select class="hidden" name="{{ field.id_for_label }}" id="{{ field.id_for_label }}">
+                    {% for value, label in field.field.choices %}
+                        <option value="{{ value }}"{% if field.value == value|stringformat:"s" %} selected{% endif %}>
+                            {{ label }}
+                        </option>
+                    {% endfor %}
+                </select>
                 <input type="text"
                         id="ingredient_name_{{ field.field.widget.attrs.id|extract_suffix}}"
                         data-toggle="modal"
@@ -24,10 +30,21 @@
                     </div>
                 {% endif %}
             </div>
+        {% elif field.name == 'unit' %}
+        <div class="form-group ingredient-detail-item">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            <select name="{{ field.id_for_label }}" id="{{ field.id_for_label }}">
+                {% for value, label in field.field.choices %}
+                    <option value="{{ value }}"{% if field.value == value|stringformat:"s" %} selected{% endif %}>
+                        {{ label }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
         {% else %}
             <div class="form-group ingredient-detail-item">
                 <label for="{{ field.field.widget.attrs.id }}">{{ field.label }}</label>
-                {{ field }}
+                <input type="number" id="{{field.field.widget.attrs.id}}" name="{{field.field.widget.attrs.id}}">
                 <!-- Render help text -->
                 {% if field.help_text %}
                     <p class="helptext">{{ field.help_text }}</p>

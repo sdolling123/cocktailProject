@@ -12,7 +12,6 @@ from django.forms import formset_factory
 # Create your views here.
 
 class CocktailTabbed(TemplateView):
-    # template_name = 'cocktails/cocktail_tabbed_exp.html'
     def get(self, request):
         cocktail_form = CocktailForm()
         ingredient_form = CocktailIngredientForm()
@@ -23,32 +22,261 @@ class CocktailTabbed(TemplateView):
 
     def post(self, request):
         cocktail_form = CocktailForm(request.POST)
-        ingredient_form = CocktailIngredientForm(request.POST)
+        print("cocktail form", cocktail_form)
+        # Extract ingredient data grouped by UUID
+        print("ingredient form", request.POST.items())
+        ingredient_data = {}
+        for key, value in request.POST.items():
+            print("key: ",key)
+            print("value: ", value)
+            if key.startswith("ingredient_id_"):
+                uuid = key.split("_")[-1]
+                ingredient_data.setdefault(uuid, {})['ingredient'] = value
+            elif key.startswith("ingredient_quantity_"):
+                uuid = key.split("_")[-1]
+                ingredient_data.setdefault(uuid, {})['quantity'] = value
+            elif key.startswith("ingredient_unit_"):
+                uuid = key.split("_")[-1]
+                ingredient_data.setdefault(uuid, {})['unit'] = value
+
+        print("Ingredient Data:", ingredient_data)  # Debugging
 
         if cocktail_form.is_valid():
             # Save the cocktail
             cocktail = cocktail_form.save()
 
-            # Check if any ingredient-related data has been entered
-            if any(request.POST.get(field) for field in ['ingredient', 'quantity', 'unit']):
+            # Process each set of ingredient data
+            ingredient_forms = []
+            for uuid, data in ingredient_data.items():
+                ingredient_form = CocktailIngredientForm(data)
+                ingredient_forms.append(ingredient_form)
+
                 if ingredient_form.is_valid():
-                    # Save the ingredient only if the form is valid
                     ingredient = ingredient_form.save(commit=False)
                     ingredient.cocktail = cocktail
                     ingredient.save()
                 else:
+                    print("Ingredient Form Errors:", ingredient_form.errors)  # Debugging
+                    # If any ingredient form is invalid, return the form with errors
                     return render(request, 'cocktails/cocktail_tabbed_exp.html', {
                         'cocktail_form': cocktail_form,
-                        'ingredient_form': ingredient_form
+                        'ingredient_form': CocktailIngredientForm(),
+                        'ingredient_forms': ingredient_forms,  # Include all forms for error display
                     })
-
+             # Add a success message
+            messages.success(self.request, f"The cocktail '{cocktail.name}' was successfully added!")
             return redirect('cocktail-list')  # Redirect to the cocktail list view
-        
+
         return render(request, 'cocktails/cocktail_tabbed_exp.html', {
             'cocktail_form': cocktail_form,
-            'ingredient_form': ingredient_form
+            'ingredient_form': CocktailIngredientForm(),
         })
 
+class EditCocktailView(TemplateView):
+    def get(self, request, pk):
+        cocktail = get_object_or_404(Cocktail, pk=pk)
+        cocktail_form = CocktailForm(instance=cocktail)
+        ingredient_forms = [
+            CocktailIngredientForm(instance=ingredient, prefix=f"ingredient_{ingredient.pk}")
+            for ingredient in cocktail.ingredients.all()
+        ]
+
+        return render(request, 'cocktails/cocktail_edit.html', {
+            'cocktail_form': cocktail_form,
+            'ingredient_forms': ingredient_forms,
+        })
+    def post(self, request, pk):
+        cocktail = get_object_or_404(Cocktail, pk=pk)
+        cocktail_form = CocktailForm(request.POST, instance=cocktail)
+        
+        existing_ingredient_ids = set(
+            cocktail.ingredients.values_list('id', flat=True)
+        )
+        
+        ingredient_forms = []
+        processed_ingredient_ids = set()
+        valid = cocktail_form.is_valid()
+
+        # Group form fields by their identifier
+        form_groups = {}
+        
+        for key in request.POST:
+            if not key.startswith("ingredient_"):
+                continue
+                
+            print(f"Processing key: {key}")
+            
+            # Handle existing ingredients (format: ingredient_131-ingredient)
+            if '-' in key:
+                identifier = key.split('-')[0].split('_')[1]
+                if identifier not in form_groups:
+                    form_groups[identifier] = 'existing'
+                    
+            # Handle new ingredients (format: ingredient_id_UUID)
+            elif '_id_' in key or '_quantity_' in key or '_unit_' in key:
+                identifier = key.split('_')[-1]
+                if identifier not in form_groups:
+                    form_groups[identifier] = 'new'
+
+        print(f"Form groups: {form_groups}")
+
+        # Process each group of ingredient fields
+        for identifier, form_type in form_groups.items():
+            print(f"Processing identifier: {identifier}, type: {form_type}")
+            
+            if form_type == 'existing':
+                try:
+                    ingredient = CocktailIngredient.objects.get(
+                        pk=identifier, 
+                        cocktail=cocktail
+                    )
+                    processed_ingredient_ids.add(int(identifier))
+                    prefix = f"ingredient_{identifier}"
+                except CocktailIngredient.DoesNotExist:
+                    continue
+            else:  # new
+                ingredient = CocktailIngredient(cocktail=cocktail)
+                # Don't use a prefix for new ingredients as the fields already include the UUID
+                prefix = "ingredient"
+            
+            # For debugging, print the POST data for this form
+            print(f"POST data for {identifier}:")
+            for key, value in request.POST.items():
+                if (form_type == 'existing' and f"ingredient_{identifier}-" in key) or \
+                (form_type == 'new' and identifier in key):
+                    print(f"{key}: {value}")
+
+            ingredient_form = CocktailIngredientForm(
+                request.POST,
+                instance=ingredient,
+                prefix=prefix
+            )
+            ingredient_forms.append(ingredient_form)
+            if not ingredient_form.is_valid():
+                valid = False
+                print(f"Form errors for {identifier}: {ingredient_form.errors}")
+
+        if valid:
+            cocktail = cocktail_form.save()
+            
+            # Delete ingredients that were removed
+            ingredients_to_delete = existing_ingredient_ids - processed_ingredient_ids
+            CocktailIngredient.objects.filter(
+                id__in=ingredients_to_delete, 
+                cocktail=cocktail
+            ).delete()
+            
+            # Save all ingredient forms
+            for ingredient_form in ingredient_forms:
+                ingredient = ingredient_form.save(commit=False)
+                ingredient.cocktail = cocktail
+                ingredient.save()
+
+            messages.success(request, f"The cocktail '{cocktail.name}' was successfully updated!")
+            return redirect('cocktail-list')
+
+        # If we get here, there were validation errors
+        print("Form validation failed")
+        for form in ingredient_forms:
+            print(f"Form errors: {form.errors}")
+
+        return render(request, 'cocktails/cocktail_edit.html', {
+            'cocktail_form': cocktail_form,
+            'ingredient_forms': ingredient_forms,
+        })
+
+    # def post(self, request, pk):
+    #     cocktail = get_object_or_404(Cocktail, pk=pk)
+    #     cocktail_form = CocktailForm(request.POST, instance=cocktail)
+        
+    #     existing_ingredient_ids = set(
+    #         cocktail.ingredients.values_list('id', flat=True)
+    #     )
+        
+    #     ingredient_forms = []
+    #     processed_ingredient_ids = set()
+    #     valid = cocktail_form.is_valid()
+
+    #     # Group form fields by their identifier
+    #     form_groups = {}
+        
+    #     for key in request.POST:
+    #         if not key.startswith("ingredient_"):
+    #             continue
+                
+    #         print(f"Processing key: {key}")  # Debug print
+            
+    #         # Handle existing ingredients (format: ingredient_131-ingredient)
+    #         if '-' in key:
+    #             identifier = key.split('-')[0].split('_')[1]
+    #             if identifier not in form_groups:
+    #                 form_groups[identifier] = 'existing'
+                    
+    #         # Handle new ingredients (format: ingredient_id_UUID)
+    #         elif '_id_' in key or '_quantity_' in key or '_unit_' in key:
+    #             identifier = key.split('_')[-1]
+    #             if identifier not in form_groups:
+    #                 form_groups[identifier] = 'new'
+
+    #     print(f"Form groups: {form_groups}")  # Debug print
+
+    #     # Process each group of ingredient fields
+    #     for identifier, form_type in form_groups.items():
+    #         print(f"Processing identifier: {identifier}, type: {form_type}")  # Debug print
+            
+    #         if form_type == 'existing':
+    #             try:
+    #                 ingredient = CocktailIngredient.objects.get(
+    #                     pk=identifier, 
+    #                     cocktail=cocktail
+    #                 )
+    #                 processed_ingredient_ids.add(int(identifier))
+    #                 prefix = f"ingredient_{identifier}"
+    #             except CocktailIngredient.DoesNotExist:
+    #                 continue
+    #         else:  # new
+    #             ingredient = CocktailIngredient(cocktail=cocktail)
+    #             prefix = f"ingredient_{identifier}"
+            
+    #         ingredient_form = CocktailIngredientForm(
+    #             request.POST,
+    #             instance=ingredient,
+    #             prefix=prefix
+    #         )
+    #         ingredient_forms.append(ingredient_form)
+    #         if not ingredient_form.is_valid():
+    #             valid = False
+    #             print(f"Form errors for {identifier}: {ingredient_form.errors}")  # Debug print
+
+    #     if valid:
+    #         cocktail = cocktail_form.save()
+            
+    #         # Delete ingredients that were removed
+    #         ingredients_to_delete = existing_ingredient_ids - processed_ingredient_ids
+    #         CocktailIngredient.objects.filter(
+    #             id__in=ingredients_to_delete, 
+    #             cocktail=cocktail
+    #         ).delete()
+            
+    #         # Save all ingredient forms
+    #         for ingredient_form in ingredient_forms:
+    #             ingredient = ingredient_form.save(commit=False)
+    #             ingredient.cocktail = cocktail
+    #             ingredient.save()
+
+    #         messages.success(request, f"The cocktail '{cocktail.name}' was successfully updated!")
+    #         return redirect('cocktail-list')
+
+    #     # If we get here, there were validation errors
+    #     print("Form validation failed")  # Debug print
+    #     for form in ingredient_forms:
+    #         print(f"Form errors: {form.errors}")  # Debug print
+
+    #     return render(request, 'cocktails/cocktail_edit.html', {
+    #         'cocktail_form': cocktail_form,
+    #         'ingredient_forms': ingredient_forms,
+    #     })
+    
 class CocktailListView(ListView):
     model = Cocktail
     context_object_name = 'cocktails'
@@ -80,45 +308,27 @@ class CocktailDetailView(DetailView):
             for ci in cocktail_ingredients
         ]
         return context
+    
+class ConfirmCocktailDeleteView(DetailView):
+    def get(self, request, pk):
+        cocktail = get_object_or_404(Cocktail, pk=pk)
+        return render(request, 'cocktails/partials/cocktail_confirm_delete.html', {'cocktail': cocktail})
 
-FORMS = [
-    ('cocktail-overview',CocktailBasicDetailsForm),
-    ('add-ingredient',PlaceholderForm),
-    ('cocktail-instructions',CocktailInstructionsForm),
-]
+    def post(self, request, pk):
+        cocktail = get_object_or_404(Cocktail, pk=pk)
+        cocktail.delete()
+        messages.success(request, f"The cocktail '{cocktail.name}' was successfully deleted!")
+        return redirect('cocktail-list')
 
-class CocktailCreationWizard(SessionWizardView):
-    form_list = FORMS
-    template_name = 'cocktails/cocktail_create.html'
+class DeleteCocktailView(TemplateView):
+    def get(self, request, pk):
+        cocktail = get_object_or_404(Cocktail, pk=pk)
+        return render(request, 'cocktails/partials/cocktail_delete.html', {'cocktail': cocktail})
 
-    def done(self, form_list, **kwargs):
-        """
-        This is called when the wizard is completed.
-        form_list contains all the validated form data.
-        """
-        # Save basic details form
-        basic_details_form = form_list[0]
-        cocktail = basic_details_form.save()
-
-        # Save ingredients form
-        ingredients_form = form_list[1]
-        for ingredient in ingredients_form.cleaned_data['ingredients']:
-            CocktailIngredient.objects.create(
-                cocktail=cocktail,
-                ingredient=ingredient,
-                quantity=ingredients_form.cleaned_data['quantity'],
-                unit=ingredients_form.cleaned_data['unit']
-            )
-
-        # Save instructions form
-        instructions_form = form_list[2]
-        cocktail.instructions = instructions_form.cleaned_data['instructions']
-        cocktail.save()
-
-        # Add a success message
-        messages.success(self.request, f"The cocktail '{cocktail.name}' was successfully added!")
-
-        # Redirect to the cocktail list page
+    def post(self, request, pk):
+        cocktail = get_object_or_404(Cocktail, pk=pk)
+        cocktail.delete()
+        messages.success(request, f"The cocktail '{cocktail.name}' was successfully deleted!")
         return redirect('cocktail-list')
 
 class SelectIngredientsView(FormView):
@@ -166,180 +376,6 @@ class SelectIngredientsView(FormView):
     def get_success_url(self):
         return reverse_lazy("cocktail-list")  # Adjust to your detail view
 
-class CocktailWizardView(SessionWizardView):
-    form_list = [
-        ("step1", CocktailBasicDetailsForm),
-        ("step2", SelectIngredientsForm),
-        ("step3", AddIngredientDetailsForm),
-        ("step4", CocktailInstructionsForm),
-    ]
-    TEMPLATES = {
-        "step1": "cocktails/step1_basic_details.html",
-        "step2": "cocktails/select_ingredients.html",
-        "step3": "cocktails/step3_ingredient_details.html",
-        "step4": "cocktails/step4_instructions.html",
-    }
-
-    def get_template_names(self):
-        """
-        Used to provide the template for a given step in the process
-        """
-        return [self.TEMPLATES[self.steps.current]]
-
-    def get_form(self, step=None, data=None, files=None):
-        if step is None:
-            step = self.steps.current
-
-        # Special handling for step 3
-        if step == "step3":
-            # Get selected ingredients from step 2
-            step2_data = self.storage.data.get("step_data", {}).get("step2", {})
-            selected_ingredient_ids = step2_data.get("ingredients", [])
-            print(selected_ingredient_ids)
-            
-            # If we're on step 3, create multiple forms based on selected ingredients
-            if selected_ingredient_ids:
-                # Retrieve previous step 3 data from session if exists
-                previous_step3_data = self.storage.data.get("step_data", {}).get("step3", {})
-                
-                # Dynamically generate forms for each selected ingredient
-                form_class = formset_factory(
-                    AddIngredientDetailsForm, 
-                    extra=0,
-                    min_num=len(selected_ingredient_ids)
-                )
-                
-                # Prepare initial data
-                initial = []
-                for ingredient_id in selected_ingredient_ids:
-                    # Try to get previously entered data for this ingredient
-                    ingredient_data = previous_step3_data.get(str(ingredient_id), {})
-                    initial.append(ingredient_data)
-                
-                # If data is provided, use it, otherwise use initial
-                if data:
-                    return form_class(data, initial=initial)
-                return form_class(initial=initial)
-        
-        # For other steps, use default form creation
-        return super().get_form(step, data, files)
-    
-    def get_context_data(self, form, **kwargs):
-        """
-        Adds custom data to the template context.
-        Called each time a step's form is rendered.
-        """
-        context = super().get_context_data(form=form, **kwargs)
-        if self.steps.current == "step2":
-            # Retrieve step 2 data
-            step2_data = self.storage.data.get("step_data", {}).get("step2", {})
-            cocktail_name = self.storage.data.get("step_data", {}).get("step1", {}).get("step1-name", "")
-            if isinstance(cocktail_name, list):
-                cocktail_name = cocktail_name[0] if cocktail_name else ""
-            cocktail_name = str(cocktail_name)
-            context["cocktail_name"] = cocktail_name
-            context["selected_ingredient_ids"] = step2_data.get("ingredients", []) if step2_data else []
-
-        if self.steps.current == "step3":
-            # Get selected ingredients to pass to template
-            step2_data = self.storage.data.get("step_data", {}).get("step2", {})
-            selected_ingredient_ids = step2_data.get("ingredients", [])
-            
-            # Create a dictionary of ingredients keyed by their index
-            ingredients_dict = {
-                i: ingredient.name 
-                for i, ingredient in enumerate(Ingredient.objects.filter(id__in=selected_ingredient_ids))
-        }
-        
-            print(ingredients_dict)
-            context['ingredients'] = ingredients_dict
-
-        return context
-    
-    def process_step(self, form):
-        """
-        Processes and stores data from the current step.
-        After the user submits a step's form.
-        """
-        step_data = super().process_step(form)
-
-        if self.steps.current == "step2":
-            step2_data = self.storage.data.get("step_data", {}).get("step2", {})
-            ingredient_ids = step2_data.get("ingredients", [])
-            step2_data["ingredients"] = ingredient_ids  # Convert QuerySet to list
-
-        if self.steps.current == "step3":
-            step2_data = self.storage.data.get("step_data", {}).get("step2", {})
-            selected_ingredient_ids = step2_data.get("ingredients", [])
-
-            # Prepare step3 data
-            step3_data = {}
-            for form_instance, ingredient_id in zip(form.forms, selected_ingredient_ids):
-                if form_instance.is_valid():
-                    ingredient_data = form_instance.cleaned_data
-                    step3_data[str(ingredient_id)] = {
-                        'quantity': ingredient_data.get('quantity', 0),
-                        'unit': ingredient_data.get('unit', 'ounce')
-                    }
-
-            # Store the processed data explicitly
-            self.storage.data["step_data"]["step3_processed"] = step3_data
-        
-        return super().process_step(form)
-
-        # return step_data
-
-    def done(self, form_list, **kwargs):
-        step1_data = self.get_cleaned_data_for_step("step1")
-        # step3_data = self.get_cleaned_data_for_step("step3")
-        # print("clean data in done",step3_data)
-        step4_data = self.get_cleaned_data_for_step("step4")
-
-        # Ensure step3_data is a dictionary
-        step3_data = self.storage.data.get("step_data", {}).get("step3_processed", {})
-        print("Processed step3_data in done:", step3_data)
-        # if not isinstance(step3_data, dict):
-        #     step3_data = {}
-
-        step2_data = self.storage.data.get("step_data", {}).get("step2", {})
-        ingredient_ids = step2_data.get("ingredients", [])
-        ingredients = Ingredient.objects.filter(id__in=ingredient_ids)
-
-        # Create or update the cocktail only at the end
-        cocktail, _ = Cocktail.objects.update_or_create(
-            name=step1_data["name"],
-            defaults={"type": step1_data["type"], "style": step1_data["style"]},
-        )
-
-        # Sync ingredients
-        selected_ingredients = step2_data["ingredients"]
-        CocktailIngredient.objects.filter(cocktail=cocktail).exclude(
-            ingredient__in=selected_ingredients).delete()
-
-        # Example: Loop through the data and handle it
-        for ingredient_id, details in step3_data.items():
-            print("ingredient_id: ", ingredient_id)
-            print("details: ", details)
-            quantity = details.get("quantity", 0)
-            unit = details.get("unit", "unknown")
-
-            # Example operation: Look up the ingredient and perform an action
-            ingredient = Ingredient.objects.get(id=ingredient_id)
-            print(f"Ingredient: {ingredient.name}, Quantity: {quantity}, Unit: {unit}")
-
-            # Add or update ingredient details (e.g., create a CocktailIngredient record)
-            CocktailIngredient.objects.update_or_create(
-                cocktail=cocktail,
-                ingredient=ingredient,
-                quantity=quantity,
-                unit=unit,
-            )
-
-        # Save instructions
-        cocktail.instructions = step4_data["instructions"]
-        cocktail.save()
-
-        return redirect(reverse_lazy("cocktail-list"))
     
 class CocktailIngredientOptions(TemplateView):
 
